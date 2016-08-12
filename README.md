@@ -68,7 +68,7 @@ $database_list = $mongodb->listDatabases(); // We can call all of the methods on
 
 Note that the $mongodb object instantiated above with the `connect()` method is the same object returned by Monga::connection() in the [Monga](https://github.com/thephpleague/monga) API:
 
-```
+```php
 $cake_monga = ConnectionManager::get('mongo_db');
 $mongodb = $cake_monga->connect();
 
