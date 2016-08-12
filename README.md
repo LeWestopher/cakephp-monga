@@ -2,14 +2,14 @@
 
 A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 
-## Requirements
+### Requirements
 
 * Composer
 * CakePHP 3.x
 * PHP 5.4+
 * MongoDB
 
-## Installation
+### Installation
 
 In your CakePHP root directory: run the following command:
 
@@ -23,7 +23,7 @@ Then in your config/bootstrap.php in your project root, add the following snippe
 Plugin::load('CakeMonga');
 ```
 
-## Usage
+### Usage
 
 First, we define a new Datasource in our config/app.php file with our namespaced Connection class name:
 
@@ -60,7 +60,7 @@ $mongodb = $cake_monga->connect(); // An instance of the Monga Connection object
 $database_list = $mongodb->listDatabases(); // We can call all of the methods on that Monga object provided by their API
 ```
 
-## Configuration
+### Configuration
 
 cakephp-monga accepts all of the same options in the Datasource configuration that can be passed into the MongoClient() object in PHP.  Documentation for these options is defined [here](http://php.net/manual/en/mongoclient.construct.php).
 
@@ -95,10 +95,40 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
 ],
 ```
 
-## What is cakephp-monga?
+### What is cakephp-monga?
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
 
-## What is cakephp-monga not?
+### What is cakephp-monga not?
 
 This plugin is not currently intended as a drop in replacement for the SQL ORM provided by CakePHP core.  While you could theoretically build an entire application using cakephp-monga as the data layer, this plugin does not have the kind of application level integration (Events, Logging, etc) that the current ORM does.  Additionally, there is not abstraction layer for Database level, Collection level, or Entity level objects (EG - Defining methods on a supposed UserCollection.php, or creating a Mongo Entity at User.php), although this is on the roadmap for a future version very soon.
+
+### Roadmap
+
+Here are some of the features that I plan on integrating into this project very soon:
+
+[ ] Collection and Entity level abstraction layers (EG - UserCollection.php and User.php for Mongo)
+[ ] SSL Support via the stream context on the third argument of the MongoClient constructor
+[ ] Query logging via the stream context on the third argument of the MongoClient constructor
+[ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
+
+### Support
+
+For bugs and feature requests, please use the [issues](https://github.com/LeWestopher/cakephp-monga/issues) section of this repository.
+
+### Contributing
+
+To contribute to this plugin please follow a few basic rules.
+
+* Contributions must follow the [CakePHP coding standard](http://book.cakephp.org/3.0/en/contributing/cakephp-coding-conventions.html).
+* [Unit tests](http://book.cakephp.org/3.0/en/development/testing.html) are required.
+
+### Creators
+
+[Wes King](http://www.github.com/lewestopher)
+
+### License
+
+Copyright 2016, Wes King
+
+Licensed under The MIT License Redistributions of files must retain the above copyright notice.
