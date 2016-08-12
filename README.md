@@ -24,6 +24,8 @@ composer require LeWestopher/cakephp-monga
 Then in your config/bootstrap.php in your project root, add the following snippet:
 
 ```php
+// In project_root/config/bootstrap.php:
+
 Plugin::load('CakeMonga');
 ```
 
@@ -38,6 +40,8 @@ bin/cake plugin load CakeMonga
 First, we define a new Datasource in our config/app.php file with our namespaced Connection class name:
 
 ```php
+// In project_root/config/app.php:
+
 'Datasources' => [
 
     'default' => [
@@ -88,6 +92,8 @@ This information should help you make the bridge between instantiating the Datas
 cakephp-monga accepts all of the same options in the Datasource configuration that can be passed into the MongoClient() object in PHP.  Documentation for these options is defined [here](http://php.net/manual/en/mongoclient.construct.php).
 
 ```php
+// In project_root/config/app.php: 
+
 'Datasources' => [
 
     'default' => [
@@ -125,8 +131,6 @@ This plugin is a wrapper of the Mongo plugin by the League of Extraordinary Pack
 ### What is cakephp-monga?
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
-
-
 
 ### What is cakephp-monga not?
 
