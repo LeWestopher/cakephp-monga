@@ -1,6 +1,6 @@
 # cakephp-monga
 
-[![Framework](https://img.shields.io/badge/Framework-CakePHP%203.x-blue.svg)]()
+[![Framework](https://img.shields.io/badge/Framework-CakePHP%203.x-orange.svg)]()
 [![license](https://img.shields.io/github/license/LeWestopher/cakephp-monga.svg?maxAge=2592000)]()
 [![Github All Releases](https://img.shields.io/github/downloads/LeWestopher/cakephp-monga/total.svg?maxAge=2592000)]()
 
