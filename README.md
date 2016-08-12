@@ -23,6 +23,12 @@ Then in your config/bootstrap.php in your project root, add the following snippe
 Plugin::load('CakeMonga');
 ```
 
+or you can use the following shell command to enable to plugin in your bootstrap.php automatically:
+
+```
+bin/cake plugin load CakeMonga
+```
+
 ### Usage
 
 First, we define a new Datasource in our config/app.php file with our namespaced Connection class name:
