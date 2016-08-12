@@ -163,6 +163,9 @@ Yes, we have one of [those](https://github.com/LeWestopher/cakephp-monga/blob/ma
 
 [Wes King](http://www.github.com/lewestopher)
 
+[Frank de Jonge](https://github.com/frankdejonge} - Creator of the Monga Dependency
+[Monga Contributors](https://github.com/thephpleague/monga/contributors)
+
 ### License
 
 Copyright 2016, Wes King
