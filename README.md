@@ -9,6 +9,20 @@ A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 * PHP 5.4+
 * MongoDB
 
+## Installation
+
+In your CakePHP root directory: run the following command:
+
+```
+composer require LeWestopher/cakephp-monga
+```
+
+Then in your config/bootstrap.php in your project root, add the following snippet:
+
+```
+Plugin::load('CakeMonga');
+```
+
 ## What is cakephp-monga?
 
 This plugin is a wrapper for the popular Monga library provided by The League of Extraordinary packages.  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.

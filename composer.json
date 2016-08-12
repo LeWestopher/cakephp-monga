@@ -2,6 +2,7 @@
     "name": "your-name-here/cakephp-monga",
     "description": "CakeMonga plugin for CakePHP",
     "type": "cakephp-plugin",
+    "license": "MIT",
     "require": {
         "php": ">=5.4.16",
         "cakephp/cakephp": "~3.0",
