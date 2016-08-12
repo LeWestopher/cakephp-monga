@@ -99,9 +99,13 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
 
+
+
 ### What is cakephp-monga not?
 
 This plugin is not currently intended as a drop in replacement for the SQL ORM provided by CakePHP core.  While you could theoretically build an entire application using cakephp-monga as the data layer, this plugin does not have the kind of application level integration (Events, Logging, etc) that the current ORM does.  Additionally, there is not abstraction layer for Database level, Collection level, or Entity level objects (EG - Defining methods on a supposed UserCollection.php, or creating a Mongo Entity at User.php), although this is on the roadmap for a future version very soon.
+
+Additionally, it's important to recognize that while certain relational features can be emulated within a MongoDB dataset, Mongo is still not an ACID compliant database.  In the future, Collection level classes will be built for object abstraction that will implement CakePHP's Repository interface, but it should be noted that full ORM features will not be supported as Mongo is not a true object relational database.
 
 ### Roadmap
 
