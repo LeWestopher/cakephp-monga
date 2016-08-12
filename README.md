@@ -1,5 +1,6 @@
 # cakephp-monga
 
+[![license](https://img.shields.io/github/license/LeWestopher/cakephp-monga.svg?maxAge=2592000)]()
 A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 
 ### Requirements
