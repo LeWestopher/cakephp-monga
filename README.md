@@ -95,6 +95,10 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
 ],
 ```
 
+### API and Accessing your MongoDB Instance
+
+This plugin is a wrapper of the Mongo plugin by the League of Extraordinary Packages.  To find out how to query, save, and update data within your Mongo collections, check out the [Monga docuemtnation](https://github.com/thephpleague/monga).
+
 ### What is cakephp-monga?
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
