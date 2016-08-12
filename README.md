@@ -19,7 +19,7 @@ composer require LeWestopher/cakephp-monga
 
 Then in your config/bootstrap.php in your project root, add the following snippet:
 
-```
+```php
 Plugin::load('CakeMonga');
 ```
 
@@ -27,22 +27,22 @@ Plugin::load('CakeMonga');
 
 First, we define a new Datasource in our config/app.php file with our namespaced Connection class name:
 
-```
-    'Datasources' => [
-    
-        'default' => [
-            // ... Default SQL Datasource
-        ],
+```php
+'Datasources' => [
 
-        'mongo_db' => [
-            'className' => 'CakeMonga\Database\MongoConnection',
-        ]
+    'default' => [
+        // ... Default SQL Datasource
     ],
+
+    'mongo_db' => [
+        'className' => 'CakeMonga\Database\MongoConnection',
+    ]
+],
 ```
 
 Then we can instantiate our MongoDB connection anywhere that we need in the application via the ConnectionManager class:
 
-```
+```php
 class ExampleController extends Controller
 {
     public function index()
@@ -54,7 +54,7 @@ class ExampleController extends Controller
 
 Then from there we can get our Monga instance by using the `connect()` method on the returned connection:
 
-```
+```php
 $cake_monga = ConnectionManager::get('monga_db');
 $mongodb = $cake_monga->connect(); // An instance of the Monga Connection object
 $database_list = $mongodb->listDatabases(); // We can call all of the methods on that Monga object provided by their API
@@ -64,35 +64,35 @@ $database_list = $mongodb->listDatabases(); // We can call all of the methods on
 
 cakephp-monga accepts all of the same options in the Datasource configuration that can be passed into the MongoClient() object in PHP.  Documentation for these options is defined [here](http://php.net/manual/en/mongoclient.construct.php).
 
-```
-    'Datasources' => [
-    
-        'default' => [
-            // ... Default SQL Datasource
-        ],
+```php
+'Datasources' => [
 
-        'mongo_db' => [
-            'className' => 'CakeMonga\Database\MongoConnection',
-            'authMechanism' => null,
-            'authSource' => null,
-            'connect' => true,
-            'connectTimeoutMS' => 60000,
-            'db' => null,
-            'fsync' => null,
-            'journal' => null,
-            'gssapiServiceName' => 'mongodb',
-            'username' => null,
-            'password' => null,
-            'readPreference' => null,
-            'readPreferenceTags' => null,
-            'replicaSet' => null,
-            'secondaryAcceptableLatencyMS' => 15,
-            'socketTimeoutMS' => 30000,
-            'ssl' => false,
-            'w' => 1,
-            'wTimeoutMS' => 10000
-        ]
+    'default' => [
+        // ... Default SQL Datasource
     ],
+
+    'mongo_db' => [
+        'className' => 'CakeMonga\Database\MongoConnection',
+        'authMechanism' => null,
+        'authSource' => null,
+        'connect' => true,
+        'connectTimeoutMS' => 60000,
+        'db' => null,
+        'fsync' => null,
+        'journal' => null,
+        'gssapiServiceName' => 'mongodb',
+        'username' => null,
+        'password' => null,
+        'readPreference' => null,
+        'readPreferenceTags' => null,
+        'replicaSet' => null,
+        'secondaryAcceptableLatencyMS' => 15,
+        'socketTimeoutMS' => 30000,
+        'ssl' => false,
+        'w' => 1,
+        'wTimeoutMS' => 10000
+    ]
+],
 ```
 
 ## What is cakephp-monga?
