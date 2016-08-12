@@ -6,7 +6,9 @@ use League\Monga;
 
 /**
  * A CakePHP Connection class for accessing MongoDB NoSQL Data stores
- *
+ * 
+ * @author Wes King
+ * @license MIT
  * @class MongoConnection
  */
 class MongoConnection
