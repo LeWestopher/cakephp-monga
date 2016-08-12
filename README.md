@@ -107,10 +107,11 @@ This plugin is not currently intended as a drop in replacement for the SQL ORM p
 
 Here are some of the features that I plan on integrating into this project very soon:
 
-[ ] Collection and Entity level abstraction layers (EG - UserCollection.php and User.php for Mongo)
-[ ] SSL Support via the stream context on the third argument of the MongoClient constructor
-[ ] Query logging via the stream context on the third argument of the MongoClient constructor
-[ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
+- [X] Basic Connection object support for retrieving an instance of the Monga class for simple data retrieval. **Added in 0.1.0**
+- [ ] Collection and Entity level abstraction layers (EG - UserCollection.php and User.php for Mongo)
+- [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
+- [ ] Query logging via the stream context on the third argument of the MongoClient constructor
+- [ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
 
 ### Support
 
