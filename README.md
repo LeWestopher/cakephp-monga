@@ -107,6 +107,7 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
         'connect' => true,
         'connectTimeoutMS' => 60000,
         'db' => null,
+        'dns' => 'mongodb://localhost:27017',
         'fsync' => null,
         'journal' => null,
         'gssapiServiceName' => 'mongodb',
@@ -120,6 +121,22 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
         'ssl' => false,
         'w' => 1,
         'wTimeoutMS' => 10000
+    ]
+],
+```
+
+### Connecting to a custom DNS using this library
+
+By default, this library connects to the `mongodb://localhost:27017` DNS string.  You can specify a custom DNS to connect on by setting a 'dns' key on the connection's Datasource hash in the config/app.php file:
+
+```php
+// In project_root/config/app.php:
+
+'Datasources' => [
+
+    'mongo_db' => [
+        'className' => 'CakeMonga\Database\MongoConnection',
+        'dns' => 'mongodb://your.remote.host:27017'
     ]
 ],
 ```
