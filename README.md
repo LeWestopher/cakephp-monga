@@ -154,6 +154,10 @@ To contribute to this plugin please follow a few basic rules.
 * Contributions must follow the [CakePHP coding standard](http://book.cakephp.org/3.0/en/contributing/cakephp-coding-conventions.html).
 * [Unit tests](http://book.cakephp.org/3.0/en/development/testing.html) are required.
 
+### Change Log
+
+Yes, we have one of [those](https://github.com/LeWestopher/cakephp-monga/blob/master/CHANGELOG.md).
+
 ### Creators
 
 [Wes King](http://www.github.com/lewestopher)
