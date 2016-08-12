@@ -1,5 +1,5 @@
 {
-    "name": "your-name-here/CakeMonga",
+    "name": "your-name-here/cakephp-monga",
     "description": "CakeMonga plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
