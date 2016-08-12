@@ -1,0 +1,24 @@
+{
+    "name": "your-name-here/CakeMonga",
+    "description": "CakeMonga plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0",
+        "league/monga": "^1.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "CakeMonga\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CakeMonga\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
