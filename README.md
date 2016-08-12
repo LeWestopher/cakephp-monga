@@ -66,6 +66,19 @@ $mongodb = $cake_monga->connect(); // An instance of the Monga Connection object
 $database_list = $mongodb->listDatabases(); // We can call all of the methods on that Monga object provided by their API
 ```
 
+Note that the $mongodb object instantiated above with the `connect()` method is the same object returned by Monga::connection() in the [Monga](https://github.com/thephpleague/monga) API:
+
+```
+$cake_monga = ConnectionManager::get('mongo_db');
+$mongodb = $cake_monga->connect();
+
+// Alternatively:
+
+$mongodb = Monga::connection($dns, $config_opts);
+```
+
+This information should help you make the bridge between instantiating the Datasource using CakePHP and utilizing the Monga API for data retrieval and saving.
+
 ### Configuration
 
 cakephp-monga accepts all of the same options in the Datasource configuration that can be passed into the MongoClient() object in PHP.  Documentation for these options is defined [here](http://php.net/manual/en/mongoclient.construct.php).
