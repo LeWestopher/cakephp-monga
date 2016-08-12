@@ -55,7 +55,7 @@ class ExampleController extends Controller
 Then from there we can get our Monga instance by using the `connect()` method on the returned connection:
 
 ```php
-$cake_monga = ConnectionManager::get('monga_db');
+$cake_monga = ConnectionManager::get('mongo_db');
 $mongodb = $cake_monga->connect(); // An instance of the Monga Connection object
 $database_list = $mongodb->listDatabases(); // We can call all of the methods on that Monga object provided by their API
 ```
