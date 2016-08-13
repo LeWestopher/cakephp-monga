@@ -143,7 +143,8 @@ class MongoConnection
     }
 
     /**
-     * Gets or Sets the DNS string for our connection in our configuration array.
+     * Gets or Sets the DNS string for our connection in our configuration array.  If no DNS string is provided, the
+     * default localhost DNS is returned.
      *
      * @param null $dns
      * @return null|string
