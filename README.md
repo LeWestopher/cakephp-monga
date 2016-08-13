@@ -18,7 +18,7 @@ A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 In your CakePHP root directory: run the following command:
 
 ```
-composer require LeWestopher/cakephp-monga
+composer require lewestopher/cakephp-monga
 ```
 
 Then in your config/bootstrap.php in your project root, add the following snippet:
