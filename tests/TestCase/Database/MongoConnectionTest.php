@@ -11,7 +11,8 @@
  * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Routing\Filter;
+namespace CakeMonga\Test\TestCase\Database;
+
 use Cake\TestSuite\TestCase;
 use CakeMonga\Database\MongoConnection;
 
