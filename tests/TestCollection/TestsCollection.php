@@ -9,7 +9,9 @@
 namespace CakeMonga\Test\TestCollection;
 
 
-class TestsCollection
+use CakeMonga\MongoCollection\BaseCollection;
+
+class TestsCollection extends BaseCollection
 {
     public function world()
     {

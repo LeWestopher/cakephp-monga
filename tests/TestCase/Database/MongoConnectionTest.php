@@ -113,4 +113,16 @@ class MongoConnectionTest extends TestCase
 
         $this->assertEquals(false, $mongo->connected());
     }
+
+    public function testNoDefaultDatabase()
+    {
+        $mongo = new MongoConnection(['name' => 'mongo_db']);
+        $expected = sprintf('You have not configured a default database for Datasource %s yet.', 'mongo_db');
+        try {
+            $mongo->getDefaultDatabase();
+        } catch (\Exception $e) {
+            $result = $e->getMessage();
+        }
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace CakeMonga\Test\TestCase\MongoCollection;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use CakeMonga\MongoCollection\CollectionRegistry;
 
@@ -12,6 +13,14 @@ use CakeMonga\MongoCollection\CollectionRegistry;
  */
 class CollectionRegistryTest extends TestCase
 {
+    public static function setupBeforeClass()
+    {
+        ConnectionManager::config('testing', [
+            'className' => 'CakeMonga\Database\MongoConnection',
+            'database' => 'local'
+        ]);
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -39,14 +48,14 @@ class CollectionRegistryTest extends TestCase
     public function testGet()
     {
         CollectionRegistry::setNamespace("CakeMonga\\Test\\TestCollection\\");
-        $test_collection = CollectionRegistry::get('Tests');
+        $test_collection = CollectionRegistry::get('Tests', ['connection' => 'testing']);
         $this->assertEquals('hello', $test_collection->world());
     }
 
     public function testClear()
     {
         CollectionRegistry::setNamespace("CakeMonga\\Test\\TestCollection\\");
-        $test_collection = CollectionRegistry::get('Tests');
+        $test_collection = CollectionRegistry::get('Tests', ['connection' => 'testing']);
         CollectionRegistry::clear();
         $this->assertEquals([], CollectionRegistry::getInstances());
     }

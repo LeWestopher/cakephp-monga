@@ -10,6 +10,7 @@ namespace CakeMonga\MongoCollection;
 
 
 use Cake\Core\Exception\Exception;
+use Cake\Datasource\ConnectionManager;
 
 class CollectionRegistry
 {
@@ -29,15 +30,19 @@ class CollectionRegistry
             return static::$_instances[$alias];
         }
 
-        static::$_instances[$alias] = static::_create($alias);
+        $conn = isset($config['connection']) ? $config['connection'] : 'mongo_db';
+
+        $mongo_connection = ConnectionManager::get($conn);
+
+        static::$_instances[$alias] = static::_create($alias, $mongo_connection);
 
         return static::$_instances[$alias];
     }
 
-    protected static function _create($instance)
+    protected static function _create($instance, $connection)
     {
         $class = static::$_instanceNamespace . $instance . "Collection";
-        return new $class;
+        return new $class($connection);
     }
 
     public static function exists($alias)
