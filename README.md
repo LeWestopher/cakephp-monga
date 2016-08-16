@@ -165,6 +165,8 @@ Here are some of the features that I plan on integrating into this project very 
 - [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
 - [ ] Query logging via the stream context on the third argument of the MongoClient constructor
 - [ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
+- [ ] Custom behavior support on the Collection level class
+- [ ] Events integration on the Collection level class
 
 ### Support
 
