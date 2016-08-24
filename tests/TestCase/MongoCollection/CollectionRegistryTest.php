@@ -7,7 +7,7 @@ use CakeMonga\MongoCollection\CollectionRegistry;
 
 /**
  * Created by PhpStorm.
- * User: root
+ * Author: Westopher King
  * Date: 8/13/16
  * Time: 2:02 PM
  */
