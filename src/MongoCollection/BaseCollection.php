@@ -63,9 +63,24 @@ class BaseCollection
         return $this->_collection;
     }
 
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
     public function find($query = [], $fields = [], $findOne = false)
     {
         return $this->collection->find($query, $fields, $findOne);
+    }
+
+    public function setMaxRetries($amount)
+    {
+        return $this->collection->setMaxRetries($amount);
+    }
+
+    public function drop()
+    {
+        return $this->collection->drop();
     }
 
     public function get($id, $fields = [])

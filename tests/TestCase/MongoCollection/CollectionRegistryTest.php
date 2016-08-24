@@ -15,15 +15,16 @@ class CollectionRegistryTest extends TestCase
 {
     public static function setupBeforeClass()
     {
-        ConnectionManager::config('testing', [
-            'className' => 'CakeMonga\Database\MongoConnection',
-            'database' => 'local'
-        ]);
+        ConnectionManager::drop('testing');
     }
 
     public function setUp()
     {
         parent::setUp();
+        ConnectionManager::config('testing', [
+            'className' => 'CakeMonga\Database\MongoConnection',
+            'database' => 'local'
+        ]);
         CollectionRegistry::clear();
         CollectionRegistry::defaultNamespace();
         CollectionRegistry::setDefaultConnection('mongo_db');
@@ -32,6 +33,7 @@ class CollectionRegistryTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        ConnectionManager::drop('testing');
     }
 
     public function testSetNamespace()
