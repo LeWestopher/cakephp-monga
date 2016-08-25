@@ -47,6 +47,6 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 ConnectionManager::config('test', ['url' => getenv('db_dsn')]);
-Plugin::load('Cors', [
+Plugin::load('CakeMonga', [
     'path' => dirname(dirname(__FILE__)) . DS,
 ]);
