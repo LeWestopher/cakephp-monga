@@ -210,7 +210,7 @@ class BaseCollection
      * @param array $options
      * @return mixed
      */
-    public function save(&$document, $options = [])
+    public function save($document, $options = [])
     {
         return $this->collection->save($document, $options);
     }
