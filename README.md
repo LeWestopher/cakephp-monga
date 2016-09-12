@@ -180,6 +180,8 @@ with the same syntax that `TableRegistry` employs:
 
 ```php
 // Define a custom User collection at src/Model/MongoCollection/UserCollection.php. 
+use CakeMonga\MongoCollection\BaseCollection;
+
 class UsersCollection extends BaseCollection
 {
     public function getUsersNamedJohn()
@@ -189,6 +191,8 @@ class UsersCollection extends BaseCollection
 }
 
 // We can retrieve this UsersCollection by using the static ::get() method on CollectionRegistry
+use CakeMonga\MongoCollection\CollectionRegistry;
+
 $users_collection = CollectionRegistry::get('Users');
 ```
 
@@ -218,10 +222,10 @@ Additionally, it's important to recognize that while certain relational features
 Here are some of the features that I plan on integrating into this project very soon:
 
 - [X] Basic Connection object support for retrieving an instance of the Monga class for simple data retrieval. **Added in 0.1.0**
-- [ ] Collection and Entity level abstraction layers (EG - UserCollection.php and User.php for Mongo)
+- [X] Collection ~~and Entity level~~ abstraction layers (EG - UserCollection.php ~~and User.php~~ for Mongo) **Added in 0.2.0**
 - [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
 - [ ] Query logging via the stream context on the third argument of the MongoClient constructor
-- [ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
+- [X] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in. **Added in 0.2.0**
 
 ### Support
 
