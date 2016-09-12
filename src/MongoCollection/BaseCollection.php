@@ -306,4 +306,9 @@ class BaseCollection
     {
         return $this->collection->setCollection($collection);
     }
+
+    public function query()
+    {
+        return new MongoQuery($this->collection);
+    }
 }
