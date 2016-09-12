@@ -79,6 +79,13 @@ class MongoConnection
     'log_reply', 'log_getmore', 'log_killcursor'];
 
     /**
+     * Define the SSL context options that are allowed for defining SSL options for our MongoDB connection
+     *
+     * @var array
+     */
+    protected $_sslContextOpts = ['cafile', 'allow_self_signed', 'verify_peer', 'verify_peer_name', 'verify_expiry'];
+
+    /**
      * MongoConnection constructor.
      * @param $config
      */
@@ -193,6 +200,11 @@ class MongoConnection
         return $this->arrayInclude($this->config(), $this->_mongoConfigOpts);
     }
 
+    public function getSSLConfig()
+    {
+        return $this->arrayInclude($this->config()['ssl_opts'], $this->_sslContextOpts);
+    }
+
     /**
      * Mock method included to satisfy CakePHP connection requirements.
      *
@@ -232,12 +244,21 @@ class MongoConnection
      * constructor's third argument.
      *
      * @param null $instance
+     * @return Logger
      */
     public function logger($instance = null)
     {
-
+        if ($instance) {
+            $this->_logger = $instance;
+        }
+        return $this->_logger;
     }
 
+    /**
+     * Returns the default Database for a connection as defined by $config['name']
+     *
+     * @return Monga\Database|\MongoDB
+     */
     public function getDefaultDatabase()
     {
         if (!isset($this->_config['database'])) {
@@ -245,5 +266,26 @@ class MongoConnection
         }
         $db = $this->_config['database'];
         return $this->connect()->database($db);
+    }
+
+    /**
+     * Builds our context object for passing in query logging options as well as the SSL context for HTTPS
+     *
+     * @return resource
+     */
+    protected function buildStreamContext()
+    {
+        $context = [];
+
+        // If we have a logger defined, merge the context options from our logger with the context array
+        if ($this->logQueries()) {
+            array_merge($context, $this->logger()->getContext());
+        }
+
+        if ($this->config()['ssl']) {
+            array_merge($context, ['ssl' => $this->getSSLConfig()]);
+        }
+
+        return stream_context_create($context);
     }
 }
