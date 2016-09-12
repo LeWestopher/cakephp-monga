@@ -60,6 +60,7 @@ class CollectionRegistry
             return static::$_instances[$alias];
         }
 
+        // Sets connection based on whether
         $conn = isset($config['connection']) ? $config['connection'] : 'mongo_db';
 
         $mongo_connection = ConnectionManager::get($conn);
@@ -167,6 +168,4 @@ class CollectionRegistry
     {
         return static::$_defaultConnection;
     }
-
-
 }
