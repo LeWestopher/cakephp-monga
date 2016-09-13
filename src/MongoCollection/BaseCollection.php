@@ -97,21 +97,6 @@ class BaseCollection
         $this->collection = $this->database->collection($collection_name);
         return $this->collection;
     }
-
-    /**
-     * Combo getter/setter method for setting the collection object.
-     *
-     * @param null $collection
-     * @return null
-     */
-    public function collection($collection = null)
-    {
-        if ($collection) {
-            $this->_collection = $collection;
-        }
-        return $this->_collection;
-    }
-
     /**
      * Returns the MongaCollection object.
      *

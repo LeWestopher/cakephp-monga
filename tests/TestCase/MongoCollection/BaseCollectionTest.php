@@ -53,7 +53,7 @@ class BaseCollectionTest extends TestCase
 
         $coll->setConnection(ConnectionManager::get('testing'));
         $this->assertEquals('testing', $coll->getConnection()->configName());
-        
+
     }
 
     public function testSetMaxRetries()
@@ -246,5 +246,14 @@ class BaseCollectionTest extends TestCase
     public function testInvalidUpdate()
     {
         $result = $this->collection->update(false);
+    }
+
+    public function testGet()
+    {
+        $this->collection->insert(['alpha' => 'beta']);
+        $result = $this->collection->findOne(['alpha' => 'beta']);
+        $id = $result['_id'];
+        $final = $this->collection->get($id);
+        $this->assertEquals($id, $final['_id']);
     }
 }
