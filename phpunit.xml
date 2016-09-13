@@ -40,6 +40,8 @@
         </blacklist>
 
         <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/Database</directory>
+            <directory suffix=".php">./src/MongoCollection</directory>
         </whitelist>
     </filter>
 
