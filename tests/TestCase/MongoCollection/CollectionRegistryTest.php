@@ -98,4 +98,12 @@ class CollectionRegistryTest extends TestCase
 
         ConnectionManager::drop('mongo_db');
     }
+
+    public function testCachedCollectionObject()
+    {
+        CollectionRegistry::setNamespace("CakeMonga\\Test\\TestCollection\\");
+        $users_collection = CollectionRegistry::get('Tests', ['connection' => 'testing']);
+        $cached_version = CollectionRegistry::get('Tests');
+        $this->assertEquals($users_collection->getConnection()->configName(), $cached_version->getConnection()->configName());
+    }
 }
