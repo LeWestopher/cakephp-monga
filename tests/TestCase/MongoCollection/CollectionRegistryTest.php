@@ -83,4 +83,19 @@ class CollectionRegistryTest extends TestCase
         CollectionRegistry::setDefaultConnection('new_default_connection');
         $this->assertEquals('new_default_connection', CollectionRegistry::getDefaultConnection());
     }
+
+    public function testCustomConnectionConfig()
+    {
+        ConnectionManager::config('mongo_db', [
+            'className' => 'CakeMonga\Database\MongoConnection',
+            'database' => 'local'
+        ]);
+
+        CollectionRegistry::setNamespace("CakeMonga\\Test\\TestCollection\\");
+        $test_collection = CollectionRegistry::get('Tests');
+        $conn_name = $test_collection->getConnection()->configName();
+        $this->assertEquals('mongo_db', $conn_name);
+
+        ConnectionManager::drop('mongo_db');
+    }
 }

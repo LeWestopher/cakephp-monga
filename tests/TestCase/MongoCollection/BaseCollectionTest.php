@@ -41,6 +41,20 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals('bases', $this->collection->getMongoCollectionName());
     }
 
+    public function testSetConnection()
+    {
+        ConnectionManager::config('alt', [
+            'className' => 'CakeMonga\Database\MongoConnection',
+            'database' => 'local'
+        ]);
+
+        $conn = ConnectionManager::get('alt');
+        $coll = new BaseCollection($conn);
+
+        $coll->setConnection(ConnectionManager::get('testing'));
+        $this->assertEquals('testing', $coll->getConnection()->configName());
+    }
+
     public function testSetMaxRetries()
     {
         $this->collection->setMaxRetries(5);
