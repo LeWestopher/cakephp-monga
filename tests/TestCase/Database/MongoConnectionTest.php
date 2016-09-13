@@ -125,4 +125,34 @@ class MongoConnectionTest extends TestCase
         }
         $this->assertEquals($expected, $result);
     }
+
+    public function testTransactionalNoOp()
+    {
+        $mongo = new MongoConnection();
+        $result = $mongo->transactional(function () {});
+        $this->assertEquals(true, $result);
+    }
+
+    public function testDisableConstraintsNoOp()
+    {
+        $mongo = new MongoConnection();
+        $result = $mongo->disableConstraints(function(){});
+        $this->assertEquals(true, $result);
+    }
+
+    public function testEnableQueryLogging()
+    {
+        $mongo = new MongoConnection();
+        $mongo->logQueries(true);
+        $result = $mongo->logQueries();
+        $this->assertEquals(true, $result);
+    }
+
+    public function testDisableQueryLogging()
+    {
+        $mongo = new MongoConnection();
+        $mongo->logQueries(false);
+        $result = $mongo->logQueries();
+        $this->assertEquals(false, $result);
+    }
 }
