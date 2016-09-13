@@ -89,7 +89,7 @@ class BaseCollection
     /**
      * Sets a new collection property based on the lowercase, tableized collection name passed in as the first arg.
      *
-     * @param $collection_name
+     * @param string $collection_name
      * @return mixed
      */
     public function setMongaCollection($collection_name)
@@ -161,7 +161,7 @@ class BaseCollection
     /**
      * Wraps Monga's native `setMaxRetries()` method on their Collection object.
      *
-     * @param $amount
+     * @param int $amount
      * @return mixed
      */
     public function setMaxRetries($amount)
