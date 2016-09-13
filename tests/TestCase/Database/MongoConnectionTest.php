@@ -155,4 +155,16 @@ class MongoConnectionTest extends TestCase
         $result = $mongo->logQueries();
         $this->assertEquals(false, $result);
     }
+
+    public function testEmptyConfigNameString()
+    {
+        $mongo = new MongoConnection();
+        $this->assertEquals('', $mongo->configName());
+    }
+
+    public function testLoggerNoOp()
+    {
+        $mongo = new MongoConnection();
+        $this->assertTrue($mongo->logger());
+    }
 }

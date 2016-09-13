@@ -107,6 +107,9 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**\
+     * @covers MongoCollection::distinct
+     */
     public function testDistinctClosure()
     {
         $collection = m::mock('MongoCollection');
@@ -135,6 +138,9 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @covers MongoCollection::aggregate
+     */
     public function testAggregationClosure()
     {
         $collection = m::mock('MongoCollection');
