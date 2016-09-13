@@ -146,6 +146,68 @@ By default, this library connects to the `mongodb://localhost:27017` DNS string.
 
 This plugin is a wrapper of the Mongo plugin by the League of Extraordinary Packages.  To find out how to query, save, and update data within your Mongo collections, check out the [Monga documentation](https://github.com/thephpleague/monga).
 
+### Defining a custom Collection class
+
+As of version 0.2.0, CakeMonga supports the usage of custom Collection classes.  These
+custom classes are located with the `src/Model/MongoCollection` folder an extend the `CakeMonga\MongoCollection\BaseCollection` class.  Now you can
+use these classes to encapsulate data layer logic into the appropriate class locations.  These methods are direct abstractions of their Monga counterparts.
+ You can view the docs for these methods on the [Monga API Docs](https://github.com/thephpleague/monga).  The `BaseCollection` class provides the following methods for data access:
+
+```php
+class BaseCollection {
+    public function getCollection();
+    public function find($query = [], $fields = [], $findOne = false);
+    public function findOne($query = [], $fields = []);
+    public function drop();
+    public function listIndexes();
+    public function save($document, $options = []);
+    public function update($values = [], $query = null, $options = []);
+    public function insert(array $data, $options = []);
+    public function remove($criteria, $options = []);
+    public function truncate();
+    public function aggregate($aggregation = []);
+    public function distinct($key, $query = []);
+    public function count($query = []);
+}
+````
+
+Note that the MongoDB collection that is utilized by custom Collection classes is the tableized name of the Collection class itself.  For example, 
+`UsersCollection.php` would map to the `users` collection inside of your MongoDB instance.  
+
+### Retrieving a custom Collection model using CollectionRegistry
+
+As of 0.2.0, custom Collection models extended from `BaseCollection` can be retrieved using the `CollectionRegistry` singleton
+with the same syntax that `TableRegistry` employs:
+
+```php
+// Define a custom User collection at src/Model/MongoCollection/UserCollection.php. 
+use CakeMonga\MongoCollection\BaseCollection;
+
+class UsersCollection extends BaseCollection
+{
+    public function getUsersNamedJohn()
+    {
+        return $this->find(['name' => 'John']);
+    }
+}
+
+// We can retrieve this UsersCollection by using the static ::get() method on CollectionRegistry
+use CakeMonga\MongoCollection\CollectionRegistry;
+
+$users_collection = CollectionRegistry::get('Users');
+```
+
+By default, the CollectionRegistry utilizes the default connection defined as 'mongo_db' in your app.php file.  Want to use
+a different Mongo datasource?  No problem, just pass in a datasource string to the 'connection' attribute of the config array for CollectionRegistry::get():
+
+```php
+$users_collection = CollectionRegistry::get('Users', [
+    'connection' => 'secondary_mongo_datasource'
+]
+```
+
+This would construct the UsersCollection class with a connection to the other datasource.
+
 ### What is cakephp-monga?
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
@@ -161,10 +223,10 @@ Additionally, it's important to recognize that while certain relational features
 Here are some of the features that I plan on integrating into this project very soon:
 
 - [X] Basic Connection object support for retrieving an instance of the Monga class for simple data retrieval. **Added in 0.1.0**
-- [ ] Collection and Entity level abstraction layers (EG - UserCollection.php and User.php for Mongo)
+- [X] Collection ~~and Entity level~~ abstraction layers (EG - UserCollection.php ~~and User.php~~ for Mongo) **Added in 0.2.0**
 - [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
 - [ ] Query logging via the stream context on the third argument of the MongoClient constructor
-- [ ] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in.
+- [X] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in. **Added in 0.2.0**
 
 ### Support
 

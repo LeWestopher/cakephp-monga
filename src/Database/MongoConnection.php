@@ -2,6 +2,7 @@
 
 namespace CakeMonga\Database;
 
+use Cake\Core\Exception\Exception;
 use League\Monga;
 
 /**
@@ -235,5 +236,14 @@ class MongoConnection
     public function logger($instance = null)
     {
 
+    }
+
+    public function getDefaultDatabase()
+    {
+        if (!isset($this->_config['database'])) {
+            throw new Exception(sprintf('You have not configured a default database for Datasource %s yet.', $this->_config['name']));
+        }
+        $db = $this->_config['database'];
+        return $this->connect()->database($db);
     }
 }

@@ -11,7 +11,8 @@
  * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Routing\Filter;
+namespace CakeMonga\Test\TestCase\Database;
+
 use Cake\TestSuite\TestCase;
 use CakeMonga\Database\MongoConnection;
 
@@ -111,5 +112,17 @@ class MongoConnectionTest extends TestCase
         $mongo = new MongoConnection();
 
         $this->assertEquals(false, $mongo->connected());
+    }
+
+    public function testNoDefaultDatabase()
+    {
+        $mongo = new MongoConnection(['name' => 'mongo_db']);
+        $expected = sprintf('You have not configured a default database for Datasource %s yet.', 'mongo_db');
+        try {
+            $mongo->getDefaultDatabase();
+        } catch (\Exception $e) {
+            $result = $e->getMessage();
+        }
+        $this->assertEquals($expected, $result);
     }
 }

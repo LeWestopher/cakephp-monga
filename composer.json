@@ -6,7 +6,8 @@
     "require": {
         "php": ">=5.4.16",
         "cakephp/cakephp": "~3.0",
-        "league/monga": "^1.2"
+        "league/monga": "^1.2",
+        "evert/phpdoc-md" : "~0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
