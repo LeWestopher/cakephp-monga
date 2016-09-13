@@ -1,8 +1,8 @@
 # cakephp-monga
 
 [![Framework](https://img.shields.io/badge/Framework-CakePHP%203.x-orange.svg)](http://cakephp.org)
-[![license](https://img.shields.io/github/license/LeWestopher/cakephp-monga.svg?maxAge=2592000)]()
-[![Github All Releases](https://img.shields.io/github/downloads/LeWestopher/cakephp-monga/total.svg?maxAge=2592000)]()
+[![license](https://img.shields.io/github/license/LeWestopher/cakephp-monga.svg?maxAge=2592000)](https://github.com/LeWestopher/cakephp-monga/blob/master/LICENSE)
+[![Github All Releases](https://img.shields.io/github/downloads/LeWestopher/cakephp-monga/total.svg?maxAge=2592000)](https://packagist.org/packages/lewestopher/cakephp-monga)
 
 A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 
