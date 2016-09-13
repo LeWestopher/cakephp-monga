@@ -53,6 +53,7 @@ class BaseCollectionTest extends TestCase
 
         $coll->setConnection(ConnectionManager::get('testing'));
         $this->assertEquals('testing', $coll->getConnection()->configName());
+        
     }
 
     public function testSetMaxRetries()
