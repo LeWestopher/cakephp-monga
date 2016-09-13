@@ -31,12 +31,14 @@ class BaseCollectionTest extends TestCase
         parent::setUp();
         $connection = ConnectionManager::get('testing');
         $this->collection = new BaseCollection($connection);
+        $this->database = $connection->connect()->database('__unit_testing__');
     }
 
     public function tearDown()
     {
         parent::tearDown();
         $this->collection->drop();
+        $this->database = null;
     }
 
     public function testGetCollectionName()
@@ -94,6 +96,10 @@ class BaseCollectionTest extends TestCase
         $result = $this->collection->count($where);
         $this->assertEquals(1, $result);
     }
+    /**
+     * @test
+     * @covers MongoCollection::distinct()
+     */
     public function testDistinct()
     {
         $collection = m::mock('MongoCollection');
@@ -107,8 +113,8 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**\
-     * @covers MongoCollection::distinct
+    /**
+     * @covers MongoCollection::distinct()
      */
     public function testDistinctClosure()
     {
@@ -124,7 +130,10 @@ class BaseCollectionTest extends TestCase
         });
         $this->assertEquals($expected, $result);
     }
-
+    /**
+     * @test
+     * @covers MongoCollection::aggregate()
+     */
     public function testAggregation()
     {
         $collection = m::mock('MongoCollection');
@@ -139,7 +148,7 @@ class BaseCollectionTest extends TestCase
     }
 
     /**
-     * @covers MongoCollection::aggregate
+     * @covers MongoCollection::aggregate()
      */
     public function testAggregationClosure()
     {
@@ -333,5 +342,21 @@ class BaseCollectionTest extends TestCase
         $id = $result['_id'];
         $final = $this->collection->get($id);
         $this->assertEquals($id, $final['_id']);
+    }
+
+    public function testSetCollection()
+    {
+        $original = $this->collection->getCollection()->getCollection();
+        $originalHash = spl_object_hash($original);
+        $new = $this->database->collection('__different__')->getCollection();
+        $newHash = spl_object_hash($new);
+        $this->collection->setCollection($new);
+        $reflection = new \ReflectionObject($this->collection->getCollection());
+        $property = $reflection->getProperty('collection');
+        $property->setAccessible(true);
+        $this->assertInstanceOf('MongoCollection', $property->getValue($this->collection->getCollection()));
+        $this->assertEquals($newHash, spl_object_hash($property->getValue($this->collection->getCollection())));
+        $this->assertNotEquals($originalHash, spl_object_hash($property->getValue($this->collection)));
+        $this->collection->setCollection($original);
     }
 }
