@@ -11,7 +11,7 @@ namespace CakeMonga\MongoCollection;
 
 use Cake\Utility\Inflector;
 use CakeMonga\Database\MongoConnection;
-use PhpParser\Node\Expr\Closure;
+use Closure;
 
 /**
  * Class BaseCollection
@@ -287,7 +287,7 @@ class BaseCollection
      * @param \MongoCollection $collection
      * @return mixed
      */
-    public function setCollection(\MongoCollection $collection)
+    public function setCollection($collection)
     {
         return $this->collection->setCollection($collection);
     }

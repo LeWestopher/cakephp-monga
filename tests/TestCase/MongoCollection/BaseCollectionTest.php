@@ -9,9 +9,12 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use League\Monga\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use CakeMonga\MongoCollection\BaseCollection;
+use Closure;
+use Mockery as m;
 
 class BaseCollectionTest extends TestCase
 {
@@ -91,6 +94,74 @@ class BaseCollectionTest extends TestCase
         $result = $this->collection->count($where);
         $this->assertEquals(1, $result);
     }
+    public function testDistinct()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('distinct')
+            ->with('surname', ['age' => 25])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->distinct('surname', ['age' => 25]);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testDistinctClosure()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('distinct')
+            ->with('surname', ['age' => 25])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->distinct('surname', function ($w) {
+            $w->where('age', 25);
+        });
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testAggregation()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('aggregate')
+            ->with(['randomstring'])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->aggregate(['randomstring']);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testAggregationClosure()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('aggregate')
+            ->with([
+                ['$limit' => 1],
+            ])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->aggregate(function ($a) {
+            $a->limit(1);
+        });
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIndexes()
+    {
+        $result = false;
+        $callback = function () use (&$result) {
+            $result = true;
+        };
+        $this->collection->indexes($callback);
+        $this->assertTrue($result);
+    }
+
     public function testDrop()
     {
         $result = $this->collection->drop();
@@ -230,6 +301,7 @@ class BaseCollectionTest extends TestCase
         $result = $this->collection->update(['name' => 'changed']);
         $this->assertTrue($result);
     }
+
 
     public function testUpdateClosure()
     {
