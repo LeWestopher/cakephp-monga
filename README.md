@@ -12,6 +12,7 @@ A plugin for accessing MongoDB NoSQL data stores in CakePHP 3.x.
 * CakePHP 3.x
 * PHP 5.4+
 * MongoDB
+* Pecl Mongo extension
 
 ### Installation
 
