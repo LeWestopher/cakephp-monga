@@ -36,6 +36,10 @@ or you can use the following shell command to enable to plugin in your bootstrap
 bin/cake plugin load CakeMonga
 ```
 
+### Extended Documentation
+
+For the extended docs, please visit our [Wiki](https://github.com/LeWestopher/cakephp-monga/wiki).
+
 ### Usage
 
 First, we define a new Datasource in our config/app.php file with our namespaced Connection class name:
