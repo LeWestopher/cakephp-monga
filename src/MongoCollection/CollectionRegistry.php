@@ -62,6 +62,7 @@ class CollectionRegistry
             return static::$_instances[$alias];
         }
 
+        // Sets connection based on whether
         $conn = isset($config['connection']) ? $config['connection'] : 'mongo_db';
 
         $mongo_connection = ConnectionManager::get($conn);
@@ -117,7 +118,7 @@ class CollectionRegistry
     protected static function _isInstantiated($alias)
     {
         if (isset(static::$_instances[$alias])) {
-            return (get_class(static::$_instances[$alias]) === 'CakeMonga\MongoCollection\Collection');
+            return true;
         }
         return false;
     }
