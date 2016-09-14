@@ -123,12 +123,12 @@ class BaseCollection
      * @param bool $findOne
      * @return mixed
      */
-    public function mFind($query = [], $fields = [], $findOne = false)
+    public function find($query = [], $fields = [], $findOne = false)
     {
         return $this->collection->find($query, $fields, $findOne);
     }
 
-    public function find($type = 'all', $options = [], $config = [])
+    public function mfind($type = 'all', $options = [], $config = [])
     {
         // TODO Get entity name
         // $entity_name = $this->getEntityName();
