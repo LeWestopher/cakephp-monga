@@ -9,7 +9,6 @@
 namespace CakeMonga\MongoCollection;
 
 
-use Aura\Intl\Exception;
 use Cake\Collection\Collection;
 use Closure;
 

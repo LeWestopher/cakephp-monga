@@ -359,4 +359,17 @@ class BaseCollectionTest extends TestCase
         $this->assertNotEquals($originalHash, spl_object_hash($property->getValue($this->collection)));
         $this->collection->setCollection($original);
     }
+
+    public function testMongaFunction()
+    {
+        $this->assertInstanceOf('League\Monga\Collection', $this->collection->monga());
+    }
+
+    public function testEntityNamespaces()
+    {
+        $this->assertEquals('App\\Model\\Entity', $this->collection->getEntityNamespace());
+        $this->collection->setEntityNamespace('CakeMonga\\Test\\Entity');
+        $this->assertEquals('CakeMonga\\Test\\Entity', $this->collection->getEntityNamespace());
+        $this->collection->setEntityNamespace('App\\Model\\Entity');
+    }
 }
