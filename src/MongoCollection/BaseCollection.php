@@ -33,17 +33,25 @@ class BaseCollection
      */
     protected $_collection;
 
+    protected $_hydration = true;
+
+    protected $_entityNamespace = 'App\\Model\\Entity';
+
     /**
      * BaseCollection constructor.
      * @param MongoConnection $connection
+     * @param array $config
      */
-    public function __construct(MongoConnection $connection)
+    public function __construct(MongoConnection $connection, $config = [])
     {
         $this->setConnection($connection);
         $this->database = $connection->getDefaultDatabase();
         $collection_name = $this->getMongoCollectionName();
         $this->setMongaCollection($collection_name);
-        return $this;
+
+        if (isset($config['entityNamespace'])) {
+            $this->setEntityNamespace($config['entityNamespace']);
+        }
     }
 
     /**
@@ -130,9 +138,35 @@ class BaseCollection
      * @param bool $findOne
      * @return mixed
      */
-    public function find($query = [], $fields = [], $findOne = false)
+    public function mFind($query = [], $fields = [], $findOne = false)
     {
         return $this->collection->find($query, $fields, $findOne);
+    }
+
+    public function find($type = 'all', $options = [], $config = [])
+    {
+        // TODO Get entity name
+        // $entity_name = $this->getEntityName();
+        $entity_name = 'test';
+
+        $query_options = [
+            'type' => $type,
+            'fields' => $config,
+            'hydration' => $this->_hydration
+        ];
+
+        if ($options instanceof Closure) {
+            $query_options['closure'] = $options;
+        } else {
+            $query_options['query'] = $options;
+        }
+
+        return $this->query($this->collection, $entity_name, $query_options);
+    }
+
+    public function query($collection, $entity_name, $options)
+    {
+        return new MongoQuery($collection, $entity_name, $options);
     }
 
     /**
@@ -307,8 +341,25 @@ class BaseCollection
         return $this->collection->setCollection($collection);
     }
 
-    public function query()
+    public function hydration($enable)
     {
-        return new MongoQuery($this->collection);
+        $this->_hydration = (bool)$enable;
+        return $this;
+    }
+
+    public function monga()
+    {
+        return $this->collection;
+    }
+
+    public function setEntityNamespace($namespace)
+    {
+        $this->_entityNamespace = $namespace;
+        return $this;
+    }
+
+    public function getEntityNamespace()
+    {
+        return $this->_entityNamespace;
     }
 }

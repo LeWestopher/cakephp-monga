@@ -37,6 +37,8 @@ class CollectionRegistry
      */
     protected static $_instanceNamespace = "App\\Model\\MongoCollection\\";
 
+    protected static $_entityNamespace = "App\\Model\\Entity";
+
     /**
      * The default connection datasource to inject into Collection instances.  This datasource is set in your app.php
      * file.
@@ -168,5 +170,13 @@ class CollectionRegistry
         return static::$_defaultConnection;
     }
 
+    public function setEntityNamespace($namespace)
+    {
+        static::$_entityNamespace = $namespace;
+    }
 
+    public function getEntityNamespace()
+    {
+        return static::$_entityNamespace;
+    }
 }

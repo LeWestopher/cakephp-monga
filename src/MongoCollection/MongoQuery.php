@@ -10,6 +10,8 @@ namespace CakeMonga\MongoCollection;
 
 
 use Aura\Intl\Exception;
+use Cake\Collection\Collection;
+use Closure;
 
 class MongoQuery
 {
@@ -25,52 +27,113 @@ class MongoQuery
 
     protected $_defaultNamespace = 'App\\Model\\Entity';
 
-    public function __construct($collection, $entity_name)
+    protected $_closure;
+
+    protected $_findType = 'all';
+
+    protected $_resultFormatter;
+
+    public function __construct($collection, $entity_name, $config = [])
     {
         $this->_collection = $collection;
+        $this->_entityName = $entity_name;
+
+        if (isset($config['closure'])) {
+            $this->closure($config['closure']);
+        }
+
+        if (isset($config['query'])) {
+            $this->where($config['query']);
+        }
+
+        if (isset($config['fields'])) {
+            $this->select($config['fields']);
+        }
+
+        if (isset($config['formatter'])) {
+            $this->formatResults($config['formatter']);
+        }
+
+        if (isset($config['hydration'])) {
+            $this->hydration($config['hydration']);
+        }
+
+        if (isset($config['entityNamespace'])) {
+            $this->setDefaultEntityNamespace($config['entityNamespace']);
+        }
     }
 
-    public function select(array $fields = []) {
-        $this->_selectArray = array_merge($this->_selectArray, $fields);
+    public function select(array $fields = [])
+    {
+        foreach($fields as $field) {
+            $this->_selectArray[$field] = true;
+        }
         return $this;
     }
 
-    public function where(array $params = [])
+    public function excludeFields(array $fields = [])
     {
+        foreach($fields as $field) {
+            $this->_selectArray[$field] = false;
+        }
+        return $this;
+    }
+
+    public function where($params = [])
+    {
+        if ($params instanceof Closure) {
+            return $this->closure($params);
+        }
         $this->_whereArray = $this->_whereArray + $params;
+        return $this;
+    }
+
+    public function closure(Closure $query)
+    {
+        $this->_closure = $query;
+        return $this;
+    }
+
+    public function formatResults(Closure $formatter)
+    {
+        $this->_resultFormatter = $formatter;
         return $this;
     }
 
     public function all()
     {
-        return $this->callFinder('all');
+        $function = [$this->_collection, 'find'];
+
+        $args = isset($this->_closure)
+            ? [$this->_closure, $this->_selectArray]
+            : [$this->_whereArray, $this->_selectArray];
+
+        $raw = call_user_func_array($function, $args);
+
+        $results = $this->_hydrate ? $this->hydrateAll($raw->toArray()) : $raw->toArray();
+
+        $collection = new Collection($results);
+
+        if ($this->_resultFormatter) {
+            $collection = $collection->map($this->_resultFormatter);
+        }
+
+        return $collection;
     }
 
     public function first()
     {
-        return $this->callFinder('first');
-    }
+        $function = [$this->_collection, 'findOne'];
 
-    public function callFinder($find_type)
-    {
-        if ($find_type === 'all') {
-            $raw = $this->_collection->find(
-                $this->_whereArray,
-                $this->_selectArray
-            );
-            $results = ($this->_hydrate) ? $this->hydrateAll($raw->toArray()) : $raw->toArray();
-        } elseif ($find_type = 'first') {
-            $raw = $this->_collection->findOne(
-                $this->_whereArray,
-                $this->_selectArray
-            );
-            $results = ($this->_hydrate) ? $this->hydrate($raw) : $raw;
-        } else {
-            throw new Exception(__(sprintf('Find type %s is not currently supported.', $find_type)));
-        }
+        $args = isset($this->_closure)
+            ? [$this->_closure, $this->_selectArray]
+            : [$this->_whereArray, $this->_selectArray];
 
-        return $results;
+        $raw = call_user_func_array($function, $args);
 
+        $result = $this->_hydrate ? $this->hydrate($raw) : $raw;
+
+        return $result;
     }
 
     public function hydration($status) {
@@ -91,6 +154,12 @@ class MongoQuery
             $hydrated[] = $this->hydrate($result);
         }
         return $hydrated;
+    }
+
+    public function setDefaultEntityNamespace($namespace)
+    {
+        $this->_defaultNamespace = $namespace;
+        return $this;
     }
 
     public function getEntityNamespace()
