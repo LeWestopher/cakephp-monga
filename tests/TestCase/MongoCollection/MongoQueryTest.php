@@ -158,4 +158,109 @@ class MongoQueryTest extends TestCase
 
         $this->assertEquals(false, isset($result->order));
     }
+
+    public function testConstructorWithClosure()
+    {
+        $this->collection->insert([
+            ['order' => 1, 'name' => 'test'],
+            ['order' => 2, 'name' => 'test'],
+            ['order' => 3, 'name' => 'alt']
+        ]);
+
+        $closure = function ($query) {
+            return $query->where('name', 'test');
+        };
+
+        $query = new MongoQuery($this->collection->getCollection(), 'Test', [
+            'entityNamespace' => 'CakeMonga\\Test\\TestEntity',
+            'closure' => $closure
+        ]);
+
+        $result = $query->all();
+
+        $this->assertEquals(2, count($result->toArray()));
+    }
+
+    public function testConstructorWithQuery()
+    {
+        $this->collection->insert([
+            ['order' => 1, 'name' => 'test'],
+            ['order' => 2, 'name' => 'test'],
+            ['order' => 3, 'name' => 'alt']
+        ]);
+
+        $where = ['name' => 'test'];
+
+        $query = new MongoQuery($this->collection->getCollection(), 'Test', [
+            'entityNamespace' => 'CakeMonga\\Test\\TestEntity',
+            'query' => $where
+        ]);
+
+        $result = $query->all();
+
+        $this->assertEquals(2, count($result->toArray()));
+    }
+
+    public function testConstructorWithSelect()
+    {
+        $this->collection->insert([
+            ['order' => 1, 'name' => 'test'],
+            ['order' => 2, 'name' => 'test'],
+            ['order' => 3, 'name' => 'alt']
+        ]);
+
+        $select = ['name'];
+
+        $query = new MongoQuery($this->collection->getCollection(), 'Test', [
+            'entityNamespace' => 'CakeMonga\\Test\\TestEntity',
+            'fields' => $select
+        ]);
+
+        $result = $query->first();
+
+        $this->assertEquals(false, isset($result->order));
+    }
+
+    public function testConstructorWithExcludedFields()
+    {
+        $this->collection->insert([
+            ['order' => 1, 'name' => 'test'],
+            ['order' => 2, 'name' => 'test'],
+            ['order' => 3, 'name' => 'alt']
+        ]);
+
+        $exclude = ['order'];
+
+        $query = new MongoQuery($this->collection->getCollection(), 'Test', [
+            'entityNamespace' => 'CakeMonga\\Test\\TestEntity',
+            'excluded' => $exclude
+        ]);
+
+        $result = $query->first();
+
+        $this->assertEquals(false, isset($result->order));
+    }
+
+    public function testConstructorWithFormatter()
+    {
+        $this->collection->insert([
+            ['order' => 1, 'name' => 'test'],
+            ['order' => 2, 'name' => 'test'],
+            ['order' => 3, 'name' => 'alt']
+        ]);
+
+        $formatter = function ($row) {
+            $row->formatted = true;
+            return $row;
+        };
+
+        $query = new MongoQuery($this->collection->getCollection(), 'Test', [
+            'entityNamespace' => 'CakeMonga\\Test\\TestEntity',
+            'formatter' => $formatter
+        ]);
+
+        $result = $query->all();
+
+        $this->assertEquals(true, count($result->first()->formatted));
+    }
 }

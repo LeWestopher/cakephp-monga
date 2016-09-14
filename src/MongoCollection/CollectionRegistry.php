@@ -171,12 +171,12 @@ class CollectionRegistry
         return static::$_defaultConnection;
     }
 
-    public function setEntityNamespace($namespace)
+    public static function setEntityNamespace($namespace)
     {
         static::$_entityNamespace = $namespace;
     }
 
-    public function getEntityNamespace()
+    public static function getEntityNamespace()
     {
         return static::$_entityNamespace;
     }

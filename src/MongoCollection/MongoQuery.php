@@ -61,6 +61,10 @@ class MongoQuery
         if (isset($config['entityNamespace'])) {
             $this->setDefaultEntityNamespace($config['entityNamespace']);
         }
+
+        if (isset($config['excluded'])) {
+            $this->excludeFields($config['excluded']);
+        }
     }
 
     public function select(array $fields = [])

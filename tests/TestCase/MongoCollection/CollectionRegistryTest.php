@@ -106,4 +106,11 @@ class CollectionRegistryTest extends TestCase
         $cached_version = CollectionRegistry::get('Tests');
         $this->assertEquals($users_collection->getConnection()->configName(), $cached_version->getConnection()->configName());
     }
+
+    public function testEntityNamespaces()
+    {
+        $this->assertEquals('App\\Model\\Entity', CollectionRegistry::getEntityNamespace());
+        CollectionRegistry::setEntityNamespace('CakeMonga\\Test\\TestEntity');
+        $this->assertEquals('CakeMonga\\Test\\TestEntity', CollectionRegistry::getEntityNamespace());
+    }
 }
