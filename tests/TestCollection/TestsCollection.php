@@ -10,11 +10,17 @@ namespace CakeMonga\Test\TestCollection;
 
 
 use CakeMonga\MongoCollection\BaseCollection;
+use CakeMonga\MongoCollection\MongoQuery;
 
 class TestsCollection extends BaseCollection
 {
     public function world()
     {
         return 'hello';
+    }
+
+    public function findAlternate(MongoQuery $query, $options)
+    {
+        return $query;
     }
 }

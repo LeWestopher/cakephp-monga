@@ -9,6 +9,7 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use CakeMonga\MongoCollection\CollectionRegistry;
 use League\Monga\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;

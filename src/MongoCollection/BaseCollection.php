@@ -37,6 +37,8 @@ class BaseCollection
 
     protected $_entityNamespace = 'App\\Model\\Entity';
 
+    protected $_alias;
+
     /**
      * BaseCollection constructor.
      * @param MongoConnection $connection
@@ -51,6 +53,10 @@ class BaseCollection
 
         if (isset($config['entityNamespace'])) {
             $this->setEntityNamespace($config['entityNamespace']);
+        }
+
+        if (isset($config['alias'])) {
+            $this->alias($config['alias']);
         }
     }
 
@@ -128,25 +134,34 @@ class BaseCollection
         return $this->collection->find($query, $fields, $findOne);
     }
 
-    public function mfind($type = 'all', $options = [], $config = [])
+    public function findAll(MongoQuery $query, $options)
     {
-        // TODO Get entity name
-        // $entity_name = $this->getEntityName();
-        $entity_name = 'test';
+        return $query;
+    }
 
-        $query_options = [
-            'type' => $type,
-            'fields' => $config,
-            'hydration' => $this->_hydration
-        ];
+    public function mfind($type = 'all', $options = [])
+    {
+        $entity_name = $this->getEntityName();
+        $options['entityNamespace'] = $this->getEntityNamespace();
+        $query = $this->query($this->collection, $entity_name, $options);
+        return $this->callFinder($type, $query, $options);
+    }
 
-        if ($options instanceof Closure) {
-            $query_options['closure'] = $options;
-        } else {
-            $query_options['query'] = $options;
+    public function callFinder($type, MongoQuery $query, array $options = [])
+    {
+        $finder = 'find' . $type;
+        if (method_exists($this, $finder)) {
+            return $this->{$finder}($query, $options);
         }
 
-        return $this->query($this->collection, $entity_name, $query_options);
+        // TODO: Set up behaviors for Collections
+        /*if ($this->_behaviors && $this->_behaviors->hasFinder($type)) {
+            return $this->_behaviors->callFinder($type, [$query, $options]);
+        }*/
+
+        throw new \BadMethodCallException(
+            sprintf('Unknown finder method "%s"', $type)
+        );
     }
 
     public function query($collection, $entity_name, $options)
@@ -346,5 +361,18 @@ class BaseCollection
     public function getEntityNamespace()
     {
         return $this->_entityNamespace;
+    }
+
+    public function alias($alias)
+    {
+        if ($alias) {
+            $this->_alias = $alias;
+        }
+        return $this->_alias;
+    }
+
+    public function getEntityName()
+    {
+        return Inflector::singularize($this->_alias);
     }
 }

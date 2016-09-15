@@ -83,7 +83,10 @@ class CollectionRegistry
     protected static function _create($instance, $connection)
     {
         $class = static::$_instanceNamespace . $instance . "Collection";
-        return new $class($connection);
+        return new $class($connection, [
+            'entityNamespace' => static::$_entityNamespace,
+            'alias' => $instance
+        ]);
     }
 
     /**
