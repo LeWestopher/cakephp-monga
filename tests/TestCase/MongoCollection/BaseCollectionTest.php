@@ -9,9 +9,12 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use League\Monga\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use CakeMonga\MongoCollection\BaseCollection;
+use Closure;
+use Mockery as m;
 
 class BaseCollectionTest extends TestCase
 {
@@ -28,17 +31,34 @@ class BaseCollectionTest extends TestCase
         parent::setUp();
         $connection = ConnectionManager::get('testing');
         $this->collection = new BaseCollection($connection);
+        $this->database = $connection->connect()->database('__unit_testing__');
     }
 
     public function tearDown()
     {
         parent::tearDown();
         $this->collection->drop();
+        $this->database = null;
     }
 
     public function testGetCollectionName()
     {
         $this->assertEquals('bases', $this->collection->getMongoCollectionName());
+    }
+
+    public function testSetConnection()
+    {
+        ConnectionManager::config('alt', [
+            'className' => 'CakeMonga\Database\MongoConnection',
+            'database' => 'local'
+        ]);
+
+        $conn = ConnectionManager::get('alt');
+        $coll = new BaseCollection($conn);
+
+        $coll->setConnection(ConnectionManager::get('testing'));
+        $this->assertEquals('testing', $coll->getConnection()->configName());
+
     }
 
     public function testSetMaxRetries()
@@ -76,6 +96,87 @@ class BaseCollectionTest extends TestCase
         $result = $this->collection->count($where);
         $this->assertEquals(1, $result);
     }
+    /**
+     * @test
+     * @covers MongoCollection::distinct()
+     */
+    public function testDistinct()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('distinct')
+            ->with('surname', ['age' => 25])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->distinct('surname', ['age' => 25]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers MongoCollection::distinct()
+     */
+    public function testDistinctClosure()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('distinct')
+            ->with('surname', ['age' => 25])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->distinct('surname', function ($w) {
+            $w->where('age', 25);
+        });
+        $this->assertEquals($expected, $result);
+    }
+    /**
+     * @test
+     * @covers MongoCollection::aggregate()
+     */
+    public function testAggregation()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('aggregate')
+            ->with(['randomstring'])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->aggregate(['randomstring']);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers MongoCollection::aggregate()
+     */
+    public function testAggregationClosure()
+    {
+        $collection = m::mock('MongoCollection');
+        $collection->shouldReceive('aggregate')
+            ->with([
+                ['$limit' => 1],
+            ])
+            ->once()
+            ->andReturn(['randomstring']);
+        $expected = ['randomstring'];
+        $c = new Collection($collection);
+        $result = $c->aggregate(function ($a) {
+            $a->limit(1);
+        });
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIndexes()
+    {
+        $result = false;
+        $callback = function () use (&$result) {
+            $result = true;
+        };
+        $this->collection->indexes($callback);
+        $this->assertTrue($result);
+    }
+
     public function testDrop()
     {
         $result = $this->collection->drop();
@@ -216,6 +317,7 @@ class BaseCollectionTest extends TestCase
         $this->assertTrue($result);
     }
 
+
     public function testUpdateClosure()
     {
         $result = $this->collection->update(function ($query) {
@@ -231,5 +333,30 @@ class BaseCollectionTest extends TestCase
     public function testInvalidUpdate()
     {
         $result = $this->collection->update(false);
+    }
+
+    public function testGet()
+    {
+        $this->collection->insert(['alpha' => 'beta']);
+        $result = $this->collection->findOne(['alpha' => 'beta']);
+        $id = $result['_id'];
+        $final = $this->collection->get($id);
+        $this->assertEquals($id, $final['_id']);
+    }
+
+    public function testSetCollection()
+    {
+        $original = $this->collection->getCollection()->getCollection();
+        $originalHash = spl_object_hash($original);
+        $new = $this->database->collection('__different__')->getCollection();
+        $newHash = spl_object_hash($new);
+        $this->collection->setCollection($new);
+        $reflection = new \ReflectionObject($this->collection->getCollection());
+        $property = $reflection->getProperty('collection');
+        $property->setAccessible(true);
+        $this->assertInstanceOf('MongoCollection', $property->getValue($this->collection->getCollection()));
+        $this->assertEquals($newHash, spl_object_hash($property->getValue($this->collection->getCollection())));
+        $this->assertNotEquals($originalHash, spl_object_hash($property->getValue($this->collection)));
+        $this->collection->setCollection($original);
     }
 }

@@ -116,7 +116,7 @@ class CollectionRegistry
     protected static function _isInstantiated($alias)
     {
         if (isset(static::$_instances[$alias])) {
-            return (get_class(static::$_instances[$alias]) === 'CakeMonga\MongoCollection\Collection');
+            return true;
         }
         return false;
     }

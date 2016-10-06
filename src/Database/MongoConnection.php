@@ -221,20 +221,22 @@ class MongoConnection
      * Mock method included to satisfy CakePHP connection requirements.
      *
      * @param callable $transaction
+     * @return boolean
      */
     public function transactional(callable $transaction)
     {
-
+        return true;
     }
 
     /**
      * Mock method included to satisfy CakePHP connection requirements.
      *
      * @param callable $operation
+     * @return boolean
      */
     public function disableConstraints(callable $operation)
     {
-
+        return true;
     }
 
     /**

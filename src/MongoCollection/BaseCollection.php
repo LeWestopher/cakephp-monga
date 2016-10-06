@@ -11,7 +11,7 @@ namespace CakeMonga\MongoCollection;
 
 use Cake\Utility\Inflector;
 use CakeMonga\Database\MongoConnection;
-use PhpParser\Node\Expr\Closure;
+use Closure;
 
 /**
  * Class BaseCollection
@@ -89,7 +89,7 @@ class BaseCollection
     /**
      * Sets a new collection property based on the lowercase, tableized collection name passed in as the first arg.
      *
-     * @param $collection_name
+     * @param string $collection_name
      * @return mixed
      */
     public function setMongaCollection($collection_name)
@@ -97,21 +97,6 @@ class BaseCollection
         $this->collection = $this->database->collection($collection_name);
         return $this->collection;
     }
-
-    /**
-     * Combo getter/setter method for setting the collection object.
-     *
-     * @param null $collection
-     * @return null
-     */
-    public function collection($collection = null)
-    {
-        if ($collection) {
-            $this->_collection = $collection;
-        }
-        return $this->_collection;
-    }
-
     /**
      * Returns the MongaCollection object.
      *
@@ -161,7 +146,7 @@ class BaseCollection
     /**
      * Wraps Monga's native `setMaxRetries()` method on their Collection object.
      *
-     * @param $amount
+     * @param int $amount
      * @return mixed
      */
     public function setMaxRetries($amount)
@@ -302,7 +287,7 @@ class BaseCollection
      * @param \MongoCollection $collection
      * @return mixed
      */
-    public function setCollection(\MongoCollection $collection)
+    public function setCollection($collection)
     {
         return $this->collection->setCollection($collection);
     }
