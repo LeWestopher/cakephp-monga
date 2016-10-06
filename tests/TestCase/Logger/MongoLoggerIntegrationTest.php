@@ -38,7 +38,7 @@ class MongoLoggerIntegrationTest extends TestCase
         parent::tearDown();
     }
     /**
-     * @expectedException \CakeMonga\Test\TestException\InsertException
+     * 
      */
     public function testOnInsert()
     {
