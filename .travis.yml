@@ -36,6 +36,7 @@ services:
   - mongodb
 
 before_script:
+  - printf "\n" | pecl install mongo
   - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
   - mkdir -p build/logs
 
