@@ -41,6 +41,8 @@ before_script:
 
   - phpenv rehash
   - set +H
+  - sleep 15
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
 
 script:
   - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit --configuration phpunit.xml; fi"
