@@ -92,6 +92,12 @@ class MongoConnection
     public function __construct($config = [])
     {
         $this->config($config);
+
+        if (isset($config['logger'])) {
+            $logger = new $config['logger'];
+            $this->logger($logger);
+            $this->logQueries(true);
+        }
     }
 
     /**
@@ -106,7 +112,13 @@ class MongoConnection
             return $this->_mongo;
         }
 
-        $this->_mongo = Monga::connection($this->dns(), $this->getMongoConfig());
+        if ($this->logger() && $this->logQueries()) {
+            $logger = $this->buildStreamContext();
+        } else {
+            $logger = [];
+        }
+
+        $this->_mongo = Monga::connection($this->dns(), $this->getMongoConfig(), $logger);
         $this->_connected = true;
         return $this->_mongo;
     }
@@ -271,21 +283,18 @@ class MongoConnection
     /**
      * Builds our context object for passing in query logging options as well as the SSL context for HTTPS
      *
-     * @return resource
+     * @return array
      */
     protected function buildStreamContext()
     {
-        $context = [];
+        $opts = [];
 
         // If we have a logger defined, merge the context options from our logger with the context array
-        if ($this->logQueries()) {
-            array_merge($context, $this->logger()->getContext());
+        if ($this->logQueries() && $logger = $this->logger()) {
+            $opts['mongodb'] = $logger->getContext();
         }
 
-        if ($this->config()['ssl']) {
-            array_merge($context, ['ssl' => $this->getSSLConfig()]);
-        }
-
-        return stream_context_create($context);
+        $context = stream_context_create($opts);
+        return ['context' => $context];
     }
 }

@@ -125,4 +125,10 @@ class MongoConnectionTest extends TestCase
         }
         $this->assertEquals($expected, $result);
     }
+
+    public function testWithLogger()
+    {
+        $mongo = new MongoConnection(['logger' => 'CakeMonga\Logger\MongoLogger']);
+        $this->assertInstanceOf('CakeMonga\Logger\MongoLogger', $mongo->logger());
+    }
 }

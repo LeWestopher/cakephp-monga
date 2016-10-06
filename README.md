@@ -102,6 +102,7 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
 
     'mongo_db' => [
         'className' => 'CakeMonga\Database\MongoConnection',
+        'logger' => null,
         'authMechanism' => null,
         'authSource' => null,
         'connect' => true,
@@ -172,6 +173,10 @@ class BaseCollection {
 
 Note that the MongoDB collection that is utilized by custom Collection classes is the tableized name of the Collection class itself.  For example, 
 `UsersCollection.php` would map to the `users` collection inside of your MongoDB instance.  
+
+### Query Logging
+
+As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create customer loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
 
 ### Retrieving a custom Collection model using CollectionRegistry
 

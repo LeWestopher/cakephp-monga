@@ -10,3 +10,7 @@ This is the initial release version of this plugin.  The plugin as it is current
 the `BaseCollection` class so that business logic can be abstracted and encapsulated.  This class wraps all of the main data access methods
 provided by the Monga API's collection object.
 * A `CollectionRegistry` singleton has been added for constructing and retrieving custom Collections that extends the `BaseCollection` class.
+
+### Version 0.3.0
+
+* CakeMonga now has query logging support.  To enable query logging, define a custom logger class that extends `CakeMonga\Logger\MongoLogger` to define logging callbacks used by the MongoDB stream context.
