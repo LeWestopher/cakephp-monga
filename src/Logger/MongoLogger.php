@@ -148,9 +148,9 @@ class MongoLogger
     public function getContext()
     {
         $context = [
-            'log_cmd_insert'    => [$this, 'onInsert'],
-            'log_cmd_delete'    => [$this, 'onDelete'],
-            'log_cmd_update'    => [$this, 'onUpdate'],
+            'log_insert'    => [$this, 'onInsert'],
+            'log_delete'    => [$this, 'onDelete'],
+            'log_update'    => [$this, 'onUpdate'],
             'log_batchinsert'   => [$this, 'onBatchInsert'],
             'log_reply'         => [$this, 'onReply'],
             'log_getmore'       => [$this, 'onGetMore'],
