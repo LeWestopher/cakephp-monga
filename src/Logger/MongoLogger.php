@@ -77,17 +77,17 @@ class MongoLogger
         return true;
     }
 
-    public function onInsert($server, $document, $options)
+    public function onInsert($server = [], $document = [], $options = [], $protocol = [])
     {
         return true;
     }
 
-    public function onDelete($server, $criteria, $options, $info)
+    public function onDelete($server = [], $criteria = [], $options = [], $info = [])
     {
         return true;
     }
 
-    public function onUpdate($server, $criteria, $document, $options, $info)
+    public function onUpdate($server = [], $criteria = [], $document = [], $options = [], $info = [])
     {
 
     }
@@ -163,9 +163,9 @@ class MongoLogger
     public function getContext()
     {
         $context = [
-            'log_cmd_insert'    => [$this, 'onCmdInsert'],
-            'log_cmd_delete'    => [$this, 'onCmdDelete'],
-            'log_cmd_update'    => [$this, 'onCmdUpdate'],
+            'log_cmd_insert'    => [$this, 'onInsert'],
+            'log_cmd_delete'    => [$this, 'onDelete'],
+            'log_cmd_update'    => [$this, 'onUpdate'],
             'log_insert'        => [$this, 'onInsert'],
             'log_delete'        => [$this, 'onDelete'],
             'log_update'        => [$this, 'onUpdate'],
