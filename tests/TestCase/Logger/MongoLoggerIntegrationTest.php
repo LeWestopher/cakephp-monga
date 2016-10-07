@@ -29,7 +29,32 @@ class MongoLoggerIntegrationTest extends TestCase
         parent::tearDown();
     }
 
-    public function testOnInsertWithMock()
+    public function testOnCmdInsert()
+    {
+        $connection = new MongoConnection();
+
+        $mock = $this->getMockBuilder(MongoLogger::class)
+            ->setMethods(['onCmdInsert'])
+            ->getMock();
+
+        $mock->expects($this->once())
+            ->method('onCmdInsert')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything()
+            );
+
+        $connection->logger($mock);
+        $connection->logQueries(true);
+        $coll = $connection->connect()->database('local')->collection('test');
+        $coll->insert(['test' => 1]);
+        $coll->truncate();
+        unset($connection);
+    }
+
+    public function testOnInsert()
     {
         $connection = new MongoConnection();
 
@@ -40,7 +65,6 @@ class MongoLoggerIntegrationTest extends TestCase
         $mock->expects($this->once())
             ->method('onInsert')
             ->with(
-                $this->anything(),
                 $this->anything(),
                 $this->anything(),
                 $this->anything()
@@ -78,6 +102,36 @@ class MongoLoggerIntegrationTest extends TestCase
         unset($connection);
     }
 
+    public function testOnCmdUpdate()
+    {
+        $connection = new MongoConnection();
+
+        $mock = $this->getMockBuilder(MongoLogger::class)
+            ->setMethods(['onCmdUpdate'])
+            ->getMock();
+
+        $mock->expects($this->once())
+            ->method('onCmdUpdate')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything()
+            );
+
+        $connection->logger($mock);
+        $connection->logQueries(true);
+        $coll = $connection->connect()->database('local')->collection('test');
+        $coll->insert(['test' => 'abcd', 'count' => 1]);
+        $obj = $coll->findOne(function ($query) {
+            $query->where('test', 'abcd');
+        });
+        $obj['count'] = 2;
+        $coll->save($obj);
+        $coll->truncate();
+        unset($connection);
+    }
+
     public function testOnUpdate()
     {
         $connection = new MongoConnection();
@@ -108,6 +162,32 @@ class MongoLoggerIntegrationTest extends TestCase
         unset($connection);
     }
 
+    public function testOnCmdDelete()
+    {
+        $connection = new MongoConnection();
+
+        $mock = $this->getMockBuilder(MongoLogger::class)
+            ->setMethods(['onCmdDelete'])
+            ->getMock();
+
+        $mock->expects($this->exactly(2))
+            ->method('onCmdDelete')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything()
+            );
+
+        $connection->logger($mock);
+        $connection->logQueries(true);
+        $coll = $connection->connect()->database('local')->collection('test');
+        $coll->insert(['test' => 'abcd', 'count' => 1]);
+        $coll->remove(['test' => 'abcd', 'count' => 1]);
+        $coll->truncate();
+        unset($connection);
+    }
+
     public function testOnDelete()
     {
         $connection = new MongoConnection();
@@ -119,6 +199,7 @@ class MongoLoggerIntegrationTest extends TestCase
         $mock->expects($this->exactly(2))
             ->method('onDelete')
             ->with(
+                $this->anything(),
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
