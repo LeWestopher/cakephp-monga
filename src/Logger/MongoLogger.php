@@ -92,37 +92,6 @@ class MongoLogger
     {
         return true;
     }
-
-    /**
-     * Callback function for whenever a MongoCursor gets more results.  See the php.net
-     * documentation below to see information on the available arguments.
-     *
-     * http://php.net/manual/en/function.log-getmore.php
-     *
-     * @param array $server
-     * @param array $info
-     * @return bool
-     */
-    public function onGetMore(array $server, array $info)
-    {
-        return true;
-    }
-
-    /**
-     * Callback function for whenever a MongoCursor object is killed.  See the php.net
-     * documentation below to see information on the available arguments.
-     *
-     * http://php.net/manual/en/function.log-killcursor.php
-     *
-     * @param array $server
-     * @param array $info
-     * @return bool
-     */
-    public function onKillCursor(array $server, array $info)
-    {
-        return true;
-    }
-
     /**
      * Returns the context array for being converted into a stream context by the MongoConnection class.
      *
@@ -139,8 +108,6 @@ class MongoLogger
             'log_update'        => [$this, 'onUpdate'],
             'log_batchinsert'   => [$this, 'onBatchInsert'],
             'log_write_batch'   => [$this, 'onBatchInsert'],
-            'log_getmore'       => [$this, 'onGetMore'],
-            'log_killcursor'    => [$this, 'onKillCursor'],
             'log_query'         => [$this, 'onQuery']
         ];
         return $context;
