@@ -27,7 +27,6 @@ class MongoLogger
     {
         return true;
     }
-
     /**
      * Callback function for whenever the MongoDB instance receives an insert query.  See the php.net documentation
      * below to see information on the available arguments:
@@ -40,7 +39,7 @@ class MongoLogger
      * @param array $protocol_options
      * @return bool
      */
-    public function onCmdInsert(array $server, array $document, array $write_options, array $protocol_options)
+    public function onInsert($server = [], $document = [], $write_options = [], $protocol_options = [])
     {
         return true;
     }
@@ -56,7 +55,7 @@ class MongoLogger
      * @param array $protocol_options
      * @return bool
      */
-    public function onCmdDelete(array $server, array $write_options, array $delete_options, array $protocol_options)
+    public function onDelete($server = [], $write_options = [], $delete_options = [], $protocol_options = [])
     {
         return true;
     }
@@ -72,24 +71,9 @@ class MongoLogger
      * @param array $protocol_options
      * @return bool
      */
-    public function onCmdUpdate(array $server, array $write_options, array $update_options, array $protocol_options)
+    public function onUpdate($server = [], $write_options = [], $update_options = [], $protocol_options = [], $info = [])
     {
         return true;
-    }
-
-    public function onInsert($server = [], $document = [], $options = [], $protocol = [])
-    {
-        return true;
-    }
-
-    public function onDelete($server = [], $criteria = [], $options = [], $info = [])
-    {
-        return true;
-    }
-
-    public function onUpdate($server = [], $criteria = [], $document = [], $options = [], $info = [])
-    {
-
     }
     /**
      * Callback function for whenever the MongoDB instance receives an batch insert query.  See the php.net
@@ -154,6 +138,7 @@ class MongoLogger
             'log_delete'        => [$this, 'onDelete'],
             'log_update'        => [$this, 'onUpdate'],
             'log_batchinsert'   => [$this, 'onBatchInsert'],
+            'log_write_batch'   => [$this, 'onBatchInsert'],
             'log_getmore'       => [$this, 'onGetMore'],
             'log_killcursor'    => [$this, 'onKillCursor'],
             'log_query'         => [$this, 'onQuery']
