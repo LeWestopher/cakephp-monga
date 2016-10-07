@@ -110,22 +110,6 @@ class MongoLogger
     }
 
     /**
-     * Callback function for whenever the MongoDB instance replies.  See the php.net
-     * documentation below to see information on the available arguments.
-     *
-     * http://php.net/manual/en/function.log-reply.php
-     *
-     * @param array $server
-     * @param array $message_headers
-     * @param array $operation_headers
-     * @return bool
-     */
-    public function onReply(array $server, array $message_headers, array $operation_headers)
-    {
-        return true;
-    }
-
-    /**
      * Callback function for whenever a MongoCursor gets more results.  See the php.net
      * documentation below to see information on the available arguments.
      *
@@ -170,7 +154,6 @@ class MongoLogger
             'log_delete'        => [$this, 'onDelete'],
             'log_update'        => [$this, 'onUpdate'],
             'log_batchinsert'   => [$this, 'onBatchInsert'],
-            'log_reply'         => [$this, 'onReply'],
             'log_getmore'       => [$this, 'onGetMore'],
             'log_killcursor'    => [$this, 'onKillCursor'],
             'log_query'         => [$this, 'onQuery']

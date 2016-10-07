@@ -58,36 +58,12 @@ class MongoLoggerIntegrationTest extends TestCase
     {
         $connection = new MongoConnection();
 
-        $mock = $this->getMockBuilder(MongoLogger::class)
+        $mock = $this->getMockBuilder('CakeMonga\Logger\MongoLogger')
             ->setMethods(['onInsert'])
             ->getMock();
 
         $mock->expects($this->once())
             ->method('onInsert')
-            ->with(
-                $this->anything(),
-                $this->anything(),
-                $this->anything()
-            );
-
-        $connection->logger($mock);
-        $connection->logQueries(true);
-        $coll = $connection->connect()->database('local')->collection('test');
-        $coll->insert(['test' => 1]);
-        $coll->truncate();
-        unset($connection);
-    }
-
-    public function testOnReply()
-    {
-        $connection = new MongoConnection();
-
-        $mock = $this->getMockBuilder(MongoLogger::class)
-            ->setMethods(['onReply'])
-            ->getMock();
-
-        $mock->expects($this->exactly(2))
-            ->method('onReply')
             ->with(
                 $this->anything(),
                 $this->anything(),
@@ -136,7 +112,7 @@ class MongoLoggerIntegrationTest extends TestCase
     {
         $connection = new MongoConnection();
 
-        $mock = $this->getMockBuilder(MongoLogger::class)
+        $mock = $this->getMockBuilder('CakeMonga\Logger\MongoLogger')
             ->setMethods(['onUpdate'])
             ->getMock();
 
@@ -192,7 +168,7 @@ class MongoLoggerIntegrationTest extends TestCase
     {
         $connection = new MongoConnection();
 
-        $mock = $this->getMockBuilder(MongoLogger::class)
+        $mock = $this->getMockBuilder('CakeMonga\Logger\MongoLogger')
             ->setMethods(['onDelete'])
             ->getMock();
 
@@ -219,7 +195,7 @@ class MongoLoggerIntegrationTest extends TestCase
     {
         $connection = new MongoConnection();
 
-        $mock = $this->getMockBuilder(MongoLogger::class)
+        $mock = $this->getMockBuilder('CakeMonga\Logger\MongoLogger')
             ->setMethods(['onBatchInsert'])
             ->getMock();
 
@@ -247,7 +223,7 @@ class MongoLoggerIntegrationTest extends TestCase
     {
         $connection = new MongoConnection();
 
-        $mock = $this->getMockBuilder(MongoLogger::class)
+        $mock = $this->getMockBuilder('CakeMonga\Logger\MongoLogger')
             ->setMethods(['onQuery'])
             ->getMock();
 
