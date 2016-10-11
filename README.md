@@ -186,7 +186,7 @@ Note that the MongoDB collection that is utilized by custom Collection classes i
 
 ### Query Logging
 
-As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create customer loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
+As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
 
 ### Retrieving a custom Collection model using CollectionRegistry
 
