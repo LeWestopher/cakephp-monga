@@ -36,11 +36,14 @@ services:
   - mongodb
 
 before_script:
+  - printf "\n" | pecl install mongo
   - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
   - mkdir -p build/logs
 
   - phpenv rehash
   - set +H
+  - sleep 15
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
 
 script:
   - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit --configuration phpunit.xml; fi"

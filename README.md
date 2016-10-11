@@ -112,6 +112,7 @@ cakephp-monga accepts all of the same options in the Datasource configuration th
 
     'mongo_db' => [
         'className' => 'CakeMonga\Database\MongoConnection',
+        'logger' => null,
         'authMechanism' => null,
         'authSource' => null,
         'connect' => true,
@@ -183,6 +184,10 @@ class BaseCollection {
 Note that the MongoDB collection that is utilized by custom Collection classes is the tableized name of the Collection class itself.  For example, 
 `UsersCollection.php` would map to the `users` collection inside of your MongoDB instance.  
 
+### Query Logging
+
+As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create customer loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
+
 ### Retrieving a custom Collection model using CollectionRegistry
 
 As of 0.2.0, custom Collection models extended from `BaseCollection` can be retrieved using the `CollectionRegistry` singleton
@@ -234,10 +239,11 @@ Here are some of the features that I plan on integrating into this project very 
 - [X] Basic Connection object support for retrieving an instance of the Monga class for simple data retrieval. **Added in 0.1.0**
 - [X] Collection ~~and Entity level~~ abstraction layers (EG - UserCollection.php ~~and User.php~~ for Mongo) **Added in 0.2.0**
 - [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
-- [ ] Query logging via the stream context on the third argument of the MongoClient constructor
+- [X] Query logging via the stream context on the third argument of the MongoClient constructor **Added in 0.3.0**
 - [X] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in. **Added in 0.2.0**
 - [ ] Custom behavior support on the Collection level class
 - [ ] Events integration on the Collection level class
+- [ ] Validation Support
 
 ### Support
 
