@@ -9,6 +9,10 @@
 namespace CakeMonga\MongoCollection;
 
 
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Utility\Inflector;
 use CakeMonga\Database\MongoConnection;
 use Closure;
@@ -18,8 +22,11 @@ use Closure;
  * @package CakeMonga\MongoCollection
  * @author Wes King
  */
-class BaseCollection
+class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 {
+
+    use EventDispatcherTrait;
+
     /**
      * Holds the current connection object that queries are made over.
      *
@@ -45,6 +52,28 @@ class BaseCollection
         $this->setMongaCollection($collection_name);
         return $this;
     }
+
+    public function implementedEvents()
+    {
+        $eventMap = [
+            'Model.beforeFind' => 'beforeFind',
+            'Model.beforeSave' => 'beforeSave',
+            'Model.afterSave' => 'afterSave',
+            'Model.beforeDelete' => 'beforeDelete',
+            'Model.afterDelete' => 'afterDelete',
+        ];
+        $events = [];
+
+        foreach ($eventMap as $event => $method) {
+            if (!method_exists($this, $method)) {
+                continue;
+            }
+            $events[$event] = $method;
+        }
+
+        return $events;
+    }
+
 
     /**
      * Returns the current connection injected into this collection.
@@ -197,7 +226,17 @@ class BaseCollection
      */
     public function save($document, $options = [])
     {
-        return $this->collection->save($document, $options);
+        $before_save_event = $this->dispatchEvent('Model.beforeSave', compact('document', 'options'));
+
+        if ($before_save_event->isStopped()) {
+            return $before_save_event->result;
+        }
+
+        $results = $this->collection->save($document, $options);
+
+        $after_save_event = $this->dispatchEvent('Model.afterSave', compact('results', 'document', 'options'));
+
+        return $results;
     }
 
     /**
