@@ -184,10 +184,6 @@ class BaseCollection {
 Note that the MongoDB collection that is utilized by custom Collection classes is the tableized name of the Collection class itself.  For example, 
 `UsersCollection.php` would map to the `users` collection inside of your MongoDB instance.  
 
-### Query Logging
-
-As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
-
 ### Retrieving a custom Collection model using CollectionRegistry
 
 As of 0.2.0, custom Collection models extended from `BaseCollection` can be retrieved using the `CollectionRegistry` singleton
@@ -221,6 +217,10 @@ $users_collection = CollectionRegistry::get('Users', [
 ```
 
 This would construct the UsersCollection class with a connection to the other datasource.
+
+### Query Logging
+
+As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
 
 ### What is cakephp-monga?
 
