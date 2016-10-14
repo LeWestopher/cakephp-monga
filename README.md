@@ -222,6 +222,29 @@ $users_collection = CollectionRegistry::get('Users', [
 
 This would construct the UsersCollection class with a connection to the other datasource.
 
+### Collection Events
+
+As of 0.4.0, you can now define the following events on your Collection classes:
+
+```php
+use CakeMonga\MongoCollection\BaseCollection;
+
+class CustomCollection extends BaseCollection
+{
+    public function beforeFind($event, $query, $fields, $findOne);
+    public function beforeSave($event, $document);
+    public function afterSave($event, $document)
+    public function beforeInsert($event, $data);
+    public function afterInsert($event, $results)
+    public function beforeUpdate($event, $values, $query)
+    public function afterUpdate($event, $document);
+    public function beforeRemove($event, $criteria);
+    public function afterRemove($event, $result, $criteria);
+}
+```
+
+You can find more information on Collection events on the [Collections Wiki Page](}.)
+
 ### What is cakephp-monga?
 
 This plugin is a wrapper for the popular [Monga](https://github.com/thephpleague/monga) library provided by [The League of Extraordinary packages.](https://thephpleague.com/)  In it's current form, this plugin is intended to get you quickly set up and running with access to a MongoDB instance so that you can access your data in your application.  This plugin provides all of the same functionality that the Monga library provides in terms of building queries and retrieving your data.
