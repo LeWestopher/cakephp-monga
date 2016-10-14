@@ -24,7 +24,6 @@ use Closure;
  */
 class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -68,11 +67,22 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
         return $this;
     }
 
+    /**
+     * Initialize a Collection instance.  Called after the constructor.  Allows you to define any extra parameters
+     * on the collection once it's been constructed.
+     *
+     * @param array $config
+     */
     public function initialize($config = [])
     {
 
     }
 
+    /**
+     * Defines a list of events implemented on the Collection class for usage by the Collection's EventManager.
+     *
+     * @return array
+     */
     public function implementedEvents()
     {
         $eventMap = [
@@ -97,7 +107,6 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         return $events;
     }
-
 
     /**
      * Returns the current connection injected into this collection.
@@ -163,6 +172,9 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     /**
      * Wraps Mongoa's native `find()` function on their Collection object.
      *
+     * If the beforeFind() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $query and $fields arguments before the find query is called.
+     *
      * @param array $query
      * @param array $fields
      * @param bool $findOne
@@ -189,6 +201,9 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
     /**
      * Wraps Monga's native `findOne()` method on their Collection object.
+     *
+     * If the beforeFind() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $query and $fields arguments before the find query is called.
      *
      * @param array $query
      * @param array $fields
@@ -273,6 +288,11 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     /**
      * Wraps Monga's native `save()` method on their Collection object.
      *
+     * If the beforeSave() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $document to be saved before the save is committed to the MongoDB instance.
+     *
+     * If the afterSave() method is defined, it is called after the save is successfully committed to the database.
+     *
      * @param $document
      * @param array $options
      * @return mixed
@@ -298,6 +318,11 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
     /**
      * Wraps Monga's native 'update()' method on their Collection object.
+     *
+     * If the beforeUpdate() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $values and $query arguments before the update query is called.
+     *
+     * If the afterUpdate() method is defined, it is called after the update is successfully committed to the database.
      *
      * @param array $values
      * @param null $query
@@ -330,6 +355,11 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     /**
      * Wraps Monga's native `insert()` method on their Collection object.
      *
+     * If the beforeInsert() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $data argument before the insert query is called.
+     *
+     * If the afterInsert() method is defined, it is called after the insert is successfully committed to the database.
+     *
      * @param array $data
      * @param array $options
      * @return mixed
@@ -355,6 +385,11 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
     /**
      * Wraps Monga's native `remove()` method on their Collection object.
+     *
+     * If the beforeRemove() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $criteria argument before the remove query is called.
+     *
+     * If the afterRemove() method is defined, it is called after the remove is successfully committed to the database.
      *
      * @param $criteria
      * @param array $options

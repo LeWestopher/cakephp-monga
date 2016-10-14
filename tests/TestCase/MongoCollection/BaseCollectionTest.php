@@ -120,6 +120,19 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testDistinctQuery()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 'a'],
+            ['test' => true, 'check' => 'a'],
+            ['test' => false, 'check' => 'b']
+        ]);
+        $results = $collection->distinct('check');
+        $this->assertEquals(2, count($results));
+    }
+
     /**
      * @covers MongoCollection::distinct()
      */
@@ -515,6 +528,20 @@ class BaseCollectionTest extends TestCase
             ['test' => false, 'check' => 3]
         ]);
         $results = $collection->find();
+        $this->assertFalse($results);
+        $collection->truncate();
+    }
+
+    public function testBeforeFindOneStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'find']);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => false, 'check' => 3]
+        ]);
+        $results = $collection->findOne();
         $this->assertFalse($results);
         $collection->truncate();
     }
