@@ -9,12 +9,16 @@
 namespace CakeMonga\Test\TestCollection;
 
 
+use Cake\Event\Event;
+use Cake\ORM\Entity;
 use CakeMonga\MongoCollection\BaseCollection;
 
 class TestsCollection extends BaseCollection
 {
+
     public function world()
     {
         return 'hello';
     }
+
 }

@@ -158,6 +158,8 @@ This plugin is a wrapper of the Mongo plugin by the League of Extraordinary Pack
 
 ### Defining a custom Collection class
 
+View the [Accessing Collections Extended Docs](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections) page for more information on creating Collection classes.
+
 As of version 0.2.0, CakeMonga supports the usage of custom Collection classes.  These
 custom classes are located with the `src/Model/MongoCollection` folder an extend the `CakeMonga\MongoCollection\BaseCollection` class.  Now you can
 use these classes to encapsulate data layer logic into the appropriate class locations.  These methods are direct abstractions of their Monga counterparts.
@@ -218,9 +220,33 @@ $users_collection = CollectionRegistry::get('Users', [
 
 This would construct the UsersCollection class with a connection to the other datasource.
 
+### Collection Event Hooks
+
+As of 0.4.0, you can now define the following events on your Collection classes:
+
+```php
+use CakeMonga\MongoCollection\BaseCollection;
+
+class CustomCollection extends BaseCollection
+{
+    public function beforeFind($event, $query, $fields, $findOne);
+    public function beforeSave($event, $document);
+    public function afterSave($event, $document)
+    public function beforeInsert($event, $data);
+    public function afterInsert($event, $results)
+    public function beforeUpdate($event, $values, $query)
+    public function afterUpdate($event, $document);
+    public function beforeRemove($event, $criteria);
+    public function afterRemove($event, $result, $criteria);
+}
+```
+
+You can find more information on Collection events on the [Accessing Collections Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections#events)
+
 ### Query Logging
 
 As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
+
 
 ### What is cakephp-monga?
 
@@ -242,7 +268,7 @@ Here are some of the features that I plan on integrating into this project very 
 - [X] Query logging via the stream context on the third argument of the MongoClient constructor **Added in 0.3.0**
 - [X] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in. **Added in 0.2.0**
 - [ ] Custom behavior support on the Collection level class
-- [ ] Events integration on the Collection level class
+- [X] Events integration on the Collection level class **Added in 0.4.0**
 - [ ] Validation Support
 
 ### Support

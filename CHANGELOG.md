@@ -14,3 +14,9 @@ provided by the Monga API's collection object.
 ### Version 0.3.0
 
 * CakeMonga now has query logging support.  To enable query logging, define a custom logger class that extends `CakeMonga\Logger\MongoLogger` to define logging callbacks used by the MongoDB stream context.
+
+### Version 0.4.0
+
+* Added an`initialize()` method to the BaseCollection class to fall more in line with the structure of the Table class.
+* Collections are no longer tied exclusively to the class name of the Collection.  Now you can pass in a `collection` key to the $config array to `CollectionRegistry` to define the collection that should be accessed in MongoDB.
+* This version ties in the ability to declare events on your Collection classes such as `beforeSave()`, `beforeFind()` and the like.  To find out more, check the wiki.

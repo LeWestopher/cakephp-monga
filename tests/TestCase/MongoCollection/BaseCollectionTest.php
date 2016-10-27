@@ -9,6 +9,13 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use CakeMonga\Test\TestCollection\DeleteEventCollection;
+use CakeMonga\Test\TestCollection\FindEventCollection;
+use CakeMonga\Test\TestCollection\InsertEventCollection;
+use CakeMonga\Test\TestCollection\SaveEventCollection;
+use CakeMonga\Test\TestCollection\StopEventCollection;
+use CakeMonga\Test\TestCollection\TestsCollection;
+use CakeMonga\Test\TestCollection\UpdateEventCollection;
 use League\Monga\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -111,6 +118,19 @@ class BaseCollectionTest extends TestCase
         $c = new Collection($collection);
         $result = $c->distinct('surname', ['age' => 25]);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testDistinctQuery()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 'a'],
+            ['test' => true, 'check' => 'a'],
+            ['test' => false, 'check' => 'b']
+        ]);
+        $results = $collection->distinct('check');
+        $this->assertEquals(2, count($results));
     }
 
     /**
@@ -358,5 +378,212 @@ class BaseCollectionTest extends TestCase
         $this->assertEquals($newHash, spl_object_hash($property->getValue($this->collection->getCollection())));
         $this->assertNotEquals($originalHash, spl_object_hash($property->getValue($this->collection)));
         $this->collection->setCollection($original);
+    }
+
+    public function testBeforeSave()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new SaveEventCollection($connection);
+        $results = $collection->save(['test' => true]);
+        $this->assertTrue($collection->_beforeSave);
+        $collection->truncate();
+    }
+
+    public function testBeforeSaveDocumentAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new SaveEventCollection($connection);
+        $collection->save(['test' => true, 'check' => '1']);
+        // Testing beforeSave by modifying $document's 'test' key to equal false instead
+        $result = $collection->findOne(['test' => false]);
+        $this->assertEquals(1, $result['check']);
+        $collection->truncate();
+    }
+
+    public function testAfterSave()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new SaveEventCollection($connection);
+        $collection->save(['test' => true]);
+        $this->assertTrue($collection->_afterSave);
+        $collection->truncate();
+    }
+
+    public function testBeforeFind()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new FindEventCollection($connection);
+        $collection->save(['test' => true]);
+        $results = $collection->find(['test' => true]);
+        $this->assertTrue($collection->_beforeFind);
+        $collection->truncate();
+    }
+
+    public function testBeforeFindQueryAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new FindEventCollection($connection);
+        $collection->insert([
+            ['test' => true],
+            ['test' => false]
+        ]);
+        // TestsCollection.php users beforeFind() to modify the $query array to search for ['test' => false] instead
+        $results = $collection->findOne(['test' => true]);
+        $this->assertFalse($results['test']);
+        $collection->truncate();
+    }
+
+    public function testBeforeFindFieldsAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new FindEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'excluded' => true]
+        ]);
+        $results = $collection->findOne(['test' => true], ['test', 'excluded']);
+        // TestsCollection.php uses beforeFind() to modify the $fields array to only include the 'test' field
+        $this->assertFalse(isset($results['excluded']));
+        $collection->truncate();
+    }
+
+    public function testBeforeInsertDocumentAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new InsertEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'excluded' => true]
+        ]);
+        $results = $collection->findOne(['test' => true]);
+        // TestsCollection.php uses beforeFind() to modify the $fields array to only include the 'test' field
+        $this->assertFalse($results['excluded']);
+        $collection->truncate();
+    }
+
+    public function testBeforeAndAfterUpdate()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new UpdateEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2]
+        ]);
+        $collection->update(['test' => false], ['check' => 2]);
+        // Testing beforeSave by modifying $document's 'test' key to equal false instead
+        $this->assertTrue($collection->_beforeUpdate);
+        $this->assertTrue($collection->_afterUpdate);
+        $collection->truncate();
+    }
+
+    public function testBeforeUpdateDataAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new UpdateEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => true, 'check' => 3]
+        ]);
+        $collection->update(['test' => false], ['check' => 2]);
+        $result = $collection->findOne(['check' => 3]);
+        // Testing beforeSave by modifying $document's 'test' key to equal false instead
+        $this->assertEquals(50, $result['test']);
+        $collection->truncate();
+    }
+
+    public function testBeforeAndAfterRemove()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new DeleteEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => true, 'check' => 3]
+        ]);
+        $collection->remove(['test' => true]);
+        $this->assertTrue($collection->_beforeRemove);
+        $this->assertTrue($collection->_afterRemove);
+        $collection->truncate();
+    }
+
+    public function testBeforeRemoveCriteriaAlter()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new DeleteEventCollection($connection);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => false, 'check' => 3]
+        ]);
+        $collection->remove(['test' => true]);
+        $this->assertEquals(2, $collection->count());
+    }
+
+    public function testBeforeFindStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'find']);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => false, 'check' => 3]
+        ]);
+        $results = $collection->find();
+        $this->assertFalse($results);
+        $collection->truncate();
+    }
+
+    public function testBeforeFindOneStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'find']);
+        $collection->insert([
+            ['test' => true, 'check' => 1],
+            ['test' => true, 'check' => 2],
+            ['test' => false, 'check' => 3]
+        ]);
+        $results = $collection->findOne();
+        $this->assertFalse($results);
+        $collection->truncate();
+    }
+
+    public function testBeforeSaveStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'save']);
+        $results = $collection->save(['test' => true]);
+        $this->assertEquals(0, $collection->count());
+        $this->assertFalse($results);
+        $collection->truncate();
+    }
+
+    public function testBeforeInsertStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'insert']);
+        $results = $collection->insert(['test' => true]);
+        $this->assertEquals(0, $collection->count());
+        $this->assertFalse($results);
+        $collection->truncate();
+    }
+
+    public function testBeforeDeleteStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'remove']);
+        $results = $collection->insert(['test' => true]);
+        $collection->remove(['test' => true]);
+        $this->assertEquals(1, $collection->count());
+        $collection->truncate();
+    }
+
+    public function testBeforeUpdateStop()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new StopEventCollection($connection, ['stop_event' => 'update']);
+        $results = $collection->insert(['test' => true]);
+        $collection->update(['test' => false]);
+        $result = $collection->findOne(['test' => true]);
+        $this->assertTrue($result['test']);
+        $collection->truncate();
     }
 }

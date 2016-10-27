@@ -65,7 +65,7 @@ class CollectionRegistry
 
         $mongo_connection = ConnectionManager::get($conn);
 
-        static::$_instances[$alias] = static::_create($alias, $mongo_connection);
+        static::$_instances[$alias] = static::_create($alias, $mongo_connection, $config);
 
         return static::$_instances[$alias];
     }
@@ -76,12 +76,13 @@ class CollectionRegistry
      *
      * @param $instance
      * @param $connection
+     * @param $config
      * @return mixed
      */
-    protected static function _create($instance, $connection)
+    protected static function _create($instance, $connection, $config)
     {
         $class = static::$_instanceNamespace . $instance . "Collection";
-        return new $class($connection);
+        return new $class($connection, $config);
     }
 
     /**

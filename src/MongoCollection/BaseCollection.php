@@ -9,6 +9,10 @@
 namespace CakeMonga\MongoCollection;
 
 
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Utility\Inflector;
 use CakeMonga\Database\MongoConnection;
 use Closure;
@@ -18,8 +22,10 @@ use Closure;
  * @package CakeMonga\MongoCollection
  * @author Wes King
  */
-class BaseCollection
+class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 {
+    use EventDispatcherTrait;
+
     /**
      * Holds the current connection object that queries are made over.
      *
@@ -36,14 +42,70 @@ class BaseCollection
     /**
      * BaseCollection constructor.
      * @param MongoConnection $connection
+     * @param $config
      */
-    public function __construct(MongoConnection $connection)
+    public function __construct(MongoConnection $connection, $config = [])
     {
         $this->setConnection($connection);
         $this->database = $connection->getDefaultDatabase();
-        $collection_name = $this->getMongoCollectionName();
+        $eventManager = $collection_name = null;
+
+        if (!empty($config['eventManager'])) {
+            $eventManager = $config['eventManager'];
+        }
+
+        if (!empty($config['collection'])) {
+            $collection_name = $config['collection'];
+        } else {
+            $collection_name = $this->getMongoCollectionName();
+        }
+
+        $this->_eventManager = $eventManager ?: new EventManager();
+        $this->_eventManager->on($this);
         $this->setMongaCollection($collection_name);
+        $this->initialize($config);
         return $this;
+    }
+
+    /**
+     * Initialize a Collection instance.  Called after the constructor.  Allows you to define any extra parameters
+     * on the collection once it's been constructed.
+     *
+     * @param array $config
+     */
+    public function initialize($config = [])
+    {
+
+    }
+
+    /**
+     * Defines a list of events implemented on the Collection class for usage by the Collection's EventManager.
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        $eventMap = [
+            'Model.beforeFind' => 'beforeFind', // Done
+            'Model.beforeSave' => 'beforeSave', // Done
+            'Model.afterSave' => 'afterSave', // Done
+            'Model.beforeInsert' => 'beforeInsert',
+            'Model.afterInsert' => 'afterInsert',
+            'Model.beforeUpdate' => 'beforeUpdate',
+            'Model.afterUpdate' => 'afterUpdate',
+            'Model.beforeRemove' => 'beforeRemove',
+            'Model.afterRemove' => 'afterRemove',
+        ];
+        $events = [];
+
+        foreach ($eventMap as $event => $method) {
+            if (!method_exists($this, $method)) {
+                continue;
+            }
+            $events[$event] = $method;
+        }
+
+        return $events;
     }
 
     /**
@@ -110,6 +172,9 @@ class BaseCollection
     /**
      * Wraps Mongoa's native `find()` function on their Collection object.
      *
+     * If the beforeFind() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $query and $fields arguments before the find query is called.
+     *
      * @param array $query
      * @param array $fields
      * @param bool $findOne
@@ -117,11 +182,28 @@ class BaseCollection
      */
     public function find($query = [], $fields = [], $findOne = false)
     {
+        $before_find_event = $this->dispatchEvent('Model.beforeFind', compact('query', 'fields', 'findOne'));
+
+        if (!empty($before_find_event->result['query']) && $before_find_event->result['query'] !== $query) {
+            $query = $before_find_event->result['query'];
+        }
+
+        if (!empty($before_find_event->result['fields']) && $before_find_event->result['fields'] !== $fields) {
+            $fields = $before_find_event->result['fields'];
+        }
+
+        if ($before_find_event->isStopped()) {
+            return false;
+        }
+
         return $this->collection->find($query, $fields, $findOne);
     }
 
     /**
      * Wraps Monga's native `findOne()` method on their Collection object.
+     *
+     * If the beforeFind() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $query and $fields arguments before the find query is called.
      *
      * @param array $query
      * @param array $fields
@@ -129,6 +211,21 @@ class BaseCollection
      */
     public function findOne($query = [], $fields = [])
     {
+        $findOne = true;
+        $before_find_event = $this->dispatchEvent('Model.beforeFind', compact('query', 'fields', 'findOne'));
+
+        if (!empty($before_find_event->result['query']) && $before_find_event->result['query'] !== $query) {
+            $query = $before_find_event->result['query'];
+        }
+
+        if (!empty($before_find_event->result['fields']) && $before_find_event->result['fields'] !== $fields) {
+            $fields = $before_find_event->result['fields'];
+        }
+
+        if ($before_find_event->isStopped()) {
+            return false;
+        }
+
         return $this->collection->findOne($query, $fields);
     }
 
@@ -191,17 +288,41 @@ class BaseCollection
     /**
      * Wraps Monga's native `save()` method on their Collection object.
      *
+     * If the beforeSave() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $document to be saved before the save is committed to the MongoDB instance.
+     *
+     * If the afterSave() method is defined, it is called after the save is successfully committed to the database.
+     *
      * @param $document
      * @param array $options
      * @return mixed
      */
     public function save($document, $options = [])
     {
-        return $this->collection->save($document, $options);
+        $before_save_event = $this->dispatchEvent('Model.beforeSave', compact('document', 'options'));
+
+        if (!empty($before_save_event->result['document']) && $before_save_event->result['document'] !== $document) {
+            $document = $before_save_event->result['document'];
+        }
+
+        if ($before_save_event->isStopped()) {
+            return false;
+        }
+
+        $results = $this->collection->save($document, $options);
+
+        $after_save_event = $this->dispatchEvent('Model.afterSave', compact('results', 'document', 'options'));
+
+        return $results;
     }
 
     /**
      * Wraps Monga's native 'update()' method on their Collection object.
+     *
+     * If the beforeUpdate() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $values and $query arguments before the update query is called.
+     *
+     * If the afterUpdate() method is defined, it is called after the update is successfully committed to the database.
      *
      * @param array $values
      * @param null $query
@@ -210,11 +331,34 @@ class BaseCollection
      */
     public function update($values = [], $query = null, $options = [])
     {
-        return $this->collection->update($values, $query, $options);
+        $before_update_event = $this->dispatchEvent('Model.beforeUpdate', compact('values', 'query'));
+
+        if (!empty($before_update_event->result['values']) && $before_update_event->result['values'] !== $values) {
+            $values = $before_update_event->result['values'];
+        }
+
+        if (!empty($before_update_event->result['query']) && $before_update_event->result['query'] !== $query) {
+            $query = $before_update_event->result['query'];
+        }
+
+        if ($before_update_event->isStopped()) {
+            return false;
+        }
+
+        $results = $this->collection->update($values, $query, $options);
+
+        $after_update_event = $this->dispatchEvent('Model.afterUpdate', compact('results', 'query', 'values'));
+
+        return $results;
     }
 
     /**
      * Wraps Monga's native `insert()` method on their Collection object.
+     *
+     * If the beforeInsert() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $data argument before the insert query is called.
+     *
+     * If the afterInsert() method is defined, it is called after the insert is successfully committed to the database.
      *
      * @param array $data
      * @param array $options
@@ -222,11 +366,30 @@ class BaseCollection
      */
     public function insert(array $data, $options = [])
     {
-        return $this->collection->insert($data, $options);
+        $before_insert_event = $this->dispatchEvent('Model.beforeInsert', compact('data', 'options'));
+
+        if (!empty($before_insert_event->result['data']) && $before_insert_event->result['data'] !== $data) {
+            $data = $before_insert_event->result['data'];
+        }
+
+        if ($before_insert_event->isStopped()) {
+            return false;
+        }
+
+        $results = $this->collection->insert($data, $options);
+
+        $after_insert_event = $this->dispatchEvent('Model.afterInsert', compact('results', 'data', 'options'));
+
+        return $results;
     }
 
     /**
      * Wraps Monga's native `remove()` method on their Collection object.
+     *
+     * If the beforeRemove() method is defined, calls that method with this methods arguments and allows direct
+     * modification of the $criteria argument before the remove query is called.
+     *
+     * If the afterRemove() method is defined, it is called after the remove is successfully committed to the database.
      *
      * @param $criteria
      * @param array $options
@@ -234,7 +397,21 @@ class BaseCollection
      */
     public function remove($criteria, $options = [])
     {
-        return $this->collection->remove($criteria, $options);
+        $before_remove_event = $this->dispatchEvent('Model.beforeRemove', compact('criteria'));
+
+        if (!empty($before_remove_event->result['criteria']) && $before_remove_event->result['criteria'] !== $criteria) {
+            $criteria = $before_remove_event->result['criteria'];
+        }
+
+        if ($before_remove_event->isStopped()) {
+            return false;
+        }
+
+        $result = $this->collection->remove($criteria, $options);
+
+        $after_insert_event = $this->dispatchEvent('Model.afterRemove', compact('result', 'criteria'));
+
+        return $result;
     }
 
     /**
