@@ -158,6 +158,8 @@ This plugin is a wrapper of the Mongo plugin by the League of Extraordinary Pack
 
 ### Defining a custom Collection class
 
+View the [Accessing Collections Extended Docs](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections) page for more information on creating Collection classes.
+
 As of version 0.2.0, CakeMonga supports the usage of custom Collection classes.  These
 custom classes are located with the `src/Model/MongoCollection` folder an extend the `CakeMonga\MongoCollection\BaseCollection` class.  Now you can
 use these classes to encapsulate data layer logic into the appropriate class locations.  These methods are direct abstractions of their Monga counterparts.
@@ -183,10 +185,6 @@ class BaseCollection {
 
 Note that the MongoDB collection that is utilized by custom Collection classes is the tableized name of the Collection class itself.  For example, 
 `UsersCollection.php` would map to the `users` collection inside of your MongoDB instance.  
-
-### Query Logging
-
-As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
 
 ### Retrieving a custom Collection model using CollectionRegistry
 
@@ -222,7 +220,7 @@ $users_collection = CollectionRegistry::get('Users', [
 
 This would construct the UsersCollection class with a connection to the other datasource.
 
-### Collection Events
+### Collection Event Hooks
 
 As of 0.4.0, you can now define the following events on your Collection classes:
 
@@ -243,7 +241,12 @@ class CustomCollection extends BaseCollection
 }
 ```
 
-You can find more information on Collection events on the [Collections Wiki Page](}.)
+You can find more information on Collection events on the [Accessing Collections Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections#events)
+
+### Query Logging
+
+As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
+
 
 ### What is cakephp-monga?
 
