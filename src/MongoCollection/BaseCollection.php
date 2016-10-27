@@ -347,7 +347,7 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         $results = $this->collection->update($values, $query, $options);
 
-        $after_update_event = $this->dispatchEvent('Model.afterUpdate', compact('results', 'query'));
+        $after_update_event = $this->dispatchEvent('Model.afterUpdate', compact('results', 'query', 'values'));
 
         return $results;
     }
@@ -378,7 +378,7 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         $results = $this->collection->insert($data, $options);
 
-        $after_insert_event = $this->dispatchEvent('Model.afterInsert', compact('results', 'options'));
+        $after_insert_event = $this->dispatchEvent('Model.afterInsert', compact('results', 'data', 'options'));
 
         return $results;
     }
