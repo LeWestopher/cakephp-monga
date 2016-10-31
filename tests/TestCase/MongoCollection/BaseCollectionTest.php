@@ -586,4 +586,46 @@ class BaseCollectionTest extends TestCase
         $this->assertTrue($result['test']);
         $collection->truncate();
     }
+
+    public function testHasBehaviors()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $this->assertEquals('CakeMonga\MongoCollection\MongoBehaviorRegistry', get_class($collection->behaviors()));
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     */
+    public function testThrowsBadMethodException()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->findThisMethodDoesntExist();
+    }
+
+    public function testAddBehavior()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertTrue($collection->hasBehavior('CakeMonga\Test\TestCollection\TestBehavior'));
+    }
+
+    public function testBehaviorAddsMethod()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertEquals('Hello World!', $collection->getHelloWorld());
+    }
+
+    public function testBehaviorGetsRemoved()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $collection->removeBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertFalse($collection->hasBehavior('CakeMonga\Test\TestCollection\TestBehavior'));
+    }
 }
