@@ -9,6 +9,7 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use CakeMonga\MongoCollection\MongoBehaviorRegistry;
 use CakeMonga\Test\TestCollection\DeleteEventCollection;
 use CakeMonga\Test\TestCollection\FindEventCollection;
 use CakeMonga\Test\TestCollection\InsertEventCollection;
@@ -584,6 +585,72 @@ class BaseCollectionTest extends TestCase
         $collection->update(['test' => false]);
         $result = $collection->findOne(['test' => true]);
         $this->assertTrue($result['test']);
+        $collection->truncate();
+    }
+
+    public function testHasBehaviors()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $this->assertEquals('CakeMonga\MongoCollection\MongoBehaviorRegistry', get_class($collection->behaviors()));
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     */
+    public function testThrowsBadMethodException()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->findThisMethodDoesntExist();
+    }
+
+    public function testAddBehavior()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertTrue($collection->hasBehavior('CakeMonga\Test\TestCollection\TestBehavior'));
+    }
+
+    public function testBehaviorAddsMethod()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertEquals('Hello World!', $collection->getHelloWorld());
+    }
+
+    public function testBehaviorGetsRemoved()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $collection->removeBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $this->assertFalse($collection->hasBehavior('CakeMonga\Test\TestCollection\TestBehavior'));
+    }
+
+    public function testBehaviorEventsWork()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection, ['stop_event' => 'save']);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $results = $collection->save(['test' => true]);
+        $one = $collection->findOne(['test' => true]);
+        $this->assertEquals(1, $one['check']);
+        $collection->truncate();
+    }
+
+    public function testInjectedCollectionIntoBehaviorRegistry()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection_2 = new BaseCollection($connection);
+        $registry = new MongoBehaviorRegistry($collection_2);
+        $collection = new BaseCollection($connection, ['behaviors' => $registry]);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $results = $collection->save(['test' => true]);
+        $one = $collection->findOne(['test' => true]);
+        $this->assertEquals(1, $one['check']);
         $collection->truncate();
     }
 }

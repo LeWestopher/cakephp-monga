@@ -20,3 +20,8 @@ provided by the Monga API's collection object.
 * Added an`initialize()` method to the BaseCollection class to fall more in line with the structure of the Table class.
 * Collections are no longer tied exclusively to the class name of the Collection.  Now you can pass in a `collection` key to the $config array to `CollectionRegistry` to define the collection that should be accessed in MongoDB.
 * This version ties in the ability to declare events on your Collection classes such as `beforeSave()`, `beforeFind()` and the like.  To find out more, check the wiki.
+
+### Version 0.5.0
+
+* Custom Behavior support is now available on classes extended from the BaseCollection object.
+* The `MongoBehavior` and `MongoBehaviorRegistry` classes were added to bridge the gap between Table behaviors and Mongo Collection behaviors.

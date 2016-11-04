@@ -13,6 +13,7 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
+use Cake\ORM\BehaviorRegistry;
 use Cake\Utility\Inflector;
 use CakeMonga\Database\MongoConnection;
 use Closure;
@@ -25,6 +26,8 @@ use Closure;
 class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 {
     use EventDispatcherTrait;
+
+    protected $_behaviors;
 
     /**
      * Holds the current connection object that queries are made over.
@@ -48,10 +51,14 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     {
         $this->setConnection($connection);
         $this->database = $connection->getDefaultDatabase();
-        $eventManager = $collection_name = null;
+        $eventManager = $behaviors = $collection_name = null;
 
         if (!empty($config['eventManager'])) {
             $eventManager = $config['eventManager'];
+        }
+
+        if (!empty($config['behaviors'])) {
+            $behaviors = $config['behaviors'];
         }
 
         if (!empty($config['collection'])) {
@@ -62,6 +69,10 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         $this->_eventManager = $eventManager ?: new EventManager();
         $this->_eventManager->on($this);
+
+        $this->_behaviors = $behaviors ?: new MongoBehaviorRegistry();
+        $this->_behaviors->setCollection($this);
+
         $this->setMongaCollection($collection_name);
         $this->initialize($config);
         return $this;
@@ -76,6 +87,72 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     public function initialize($config = [])
     {
 
+    }
+    /**
+     * Returns the behavior registry for this table.
+     *
+     * @return \Cake\ORM\BehaviorRegistry The BehaviorRegistry instance.
+     */
+    public function behaviors()
+    {
+        return $this->_behaviors;
+    }
+    /**
+     * Add a behavior.
+     *
+     * Adds a behavior to this table's behavior collection. Behaviors
+     * provide an easy way to create horizontally re-usable features
+     * that can provide trait like functionality, and allow for events
+     * to be listened to.
+     *
+     * Example:
+     *
+     * Load a behavior, with some settings.
+     *
+     * ```
+     * $this->addBehavior('Tree', ['parent' => 'parentId']);
+     * ```
+     *
+     * Behaviors are generally loaded during Table::initialize().
+     *
+     * @param string $name The name of the behavior. Can be a short class reference.
+     * @param array $options The options for the behavior to use.
+     * @return void
+     * @throws \RuntimeException If a behavior is being reloaded.
+     * @see \Cake\ORM\Behavior
+     */
+    public function addBehavior($name, array $options = [])
+    {
+        $this->_behaviors->load($name, $options);
+    }
+    /**
+     * Removes a behavior from this table's behavior registry.
+     *
+     * Example:
+     *
+     * Remove a behavior from this table.
+     *
+     * ```
+     * $this->removeBehavior('Tree');
+     * ```
+     *
+     * @param string $name The alias that the behavior was added with.
+     * @return void
+     * @see \Cake\ORM\Behavior
+     */
+    public function removeBehavior($name)
+    {
+        $this->_behaviors->unload($name);
+    }
+    /**
+     * Check if a behavior with the given alias has been loaded.
+     *
+     * @param string $name The behavior alias to check.
+     * @return bool Whether or not the behavior exists.
+     */
+    public function hasBehavior($name)
+    {
+        return $this->_behaviors->has($name);
     }
 
     /**
@@ -467,5 +544,20 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     public function setCollection($collection)
     {
         return $this->collection->setCollection($collection);
+    }
+
+    public function __call($method, $args)
+    {
+        if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
+            return $this->_behaviors->call($method, $args);
+        }
+        /*
+        if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
+            return $this->_dynamicFinder($method, $args);
+        }*/
+
+        throw new \BadMethodCallException(
+            sprintf('Unknown method "%s"', $method)
+        );
     }
 }
