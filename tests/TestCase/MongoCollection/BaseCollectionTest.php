@@ -628,4 +628,15 @@ class BaseCollectionTest extends TestCase
         $collection->removeBehavior('CakeMonga\Test\TestCollection\TestBehavior');
         $this->assertFalse($collection->hasBehavior('CakeMonga\Test\TestCollection\TestBehavior'));
     }
+
+    public function testBehaviorEventsWork()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection = new BaseCollection($connection, ['stop_event' => 'save']);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $results = $collection->save(['test' => true]);
+        $one = $collection->findOne(['test' => true]);
+        $this->assertEquals(1, $one['check']);
+        $collection->truncate();
+    }
 }

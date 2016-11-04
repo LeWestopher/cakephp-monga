@@ -2,4 +2,4 @@
 - [X] Extend BehaviorRegistry and override __construct and setTable() and _resolveClassName and _create
 - [X] Extend Behavior class and override __construct to set _collection instead of _table
 - [X] Create __call() method on BaseCollection and _dynamicFinder() method as well
-- [ ] has(), load(), remove(), etc on BaseCollection
+- [X] has(), load(), remove(), etc on BaseCollection

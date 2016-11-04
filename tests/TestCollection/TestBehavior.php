@@ -17,4 +17,9 @@ class TestBehavior extends MongoBehavior
     {
         return 'Hello World!';
     }
+
+    public function beforeSave($event, $document)
+    {
+        $event->result['document'] = ['test' => true, 'check' => 1];
+    }
 }
