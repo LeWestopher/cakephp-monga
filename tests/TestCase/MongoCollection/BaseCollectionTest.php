@@ -9,6 +9,7 @@
 namespace CakeMonga\Test\TestCase\MongoCollection;
 
 
+use CakeMonga\MongoCollection\MongoBehaviorRegistry;
 use CakeMonga\Test\TestCollection\DeleteEventCollection;
 use CakeMonga\Test\TestCollection\FindEventCollection;
 use CakeMonga\Test\TestCollection\InsertEventCollection;
@@ -633,6 +634,19 @@ class BaseCollectionTest extends TestCase
     {
         $connection = ConnectionManager::get('testing');
         $collection = new BaseCollection($connection, ['stop_event' => 'save']);
+        $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
+        $results = $collection->save(['test' => true]);
+        $one = $collection->findOne(['test' => true]);
+        $this->assertEquals(1, $one['check']);
+        $collection->truncate();
+    }
+
+    public function testInjectedCollectionIntoBehaviorRegistry()
+    {
+        $connection = ConnectionManager::get('testing');
+        $collection_2 = new BaseCollection($connection);
+        $registry = new MongoBehaviorRegistry($collection_2);
+        $collection = new BaseCollection($connection, ['behaviors' => $registry]);
         $collection->addBehavior('CakeMonga\Test\TestCollection\TestBehavior');
         $results = $collection->save(['test' => true]);
         $one = $collection->findOne(['test' => true]);

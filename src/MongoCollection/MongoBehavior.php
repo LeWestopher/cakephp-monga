@@ -13,8 +13,22 @@ use Cake\ORM\Behavior;
 
 class MongoBehavior extends Behavior
 {
+    /**
+     * Holds the Mongo BaseCollection object for the behavior.
+     *
+     * @var BaseCollection
+     */
     protected $_collection;
 
+    /**
+     * MongoBehavior constructor.
+     *
+     * Sets the $this->_collection property to a BaseCollection instead of the traditional Behavior constructor
+     * that sets $this->_table to a Table object.
+     *
+     * @param BaseCollection $collection
+     * @param array $config
+     */
     public function __construct(BaseCollection $collection, array $config = [])
     {
         $config = $this->_resolveMethodAliases(
