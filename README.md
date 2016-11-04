@@ -243,6 +243,12 @@ class CustomCollection extends BaseCollection
 
 You can find more information on Collection events on the [Accessing Collections Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections#events)
 
+### Custom Behaviors
+
+As of 0.5.0, you can attach Behaviors to classes extending the BaseCollection class in the same manner that you would to a Table object.  To create a custom behavior for a BaseCollection, you should extend the `MongoBehavior` class instead of the regular `Behavior` class.
+
+You can find out more about Behaviors on collections on the [Accessing Collections Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Accessing-Collections#behaviors).
+
 ### Query Logging
 
 As of version 0.3.0, CakeMonga supports query logging via the Mongo logging context.  To learn how to enable logging and create custom loggers, visit the [Query Logging Wiki Page](https://github.com/LeWestopher/cakephp-monga/wiki/Query-Logging).
@@ -267,7 +273,7 @@ Here are some of the features that I plan on integrating into this project very 
 - [ ] SSL Support via the stream context on the third argument of the MongoClient constructor
 - [X] Query logging via the stream context on the third argument of the MongoClient constructor **Added in 0.3.0**
 - [X] A CollectionRegistry class for retrieving Mongo collections with connection params already passed in. **Added in 0.2.0**
-- [ ] Custom behavior support on the Collection level class
+- [X] Custom behavior support on the Collection level class **Added in 0.5.0**
 - [X] Events integration on the Collection level class **Added in 0.4.0**
 - [ ] Validation Support
 
