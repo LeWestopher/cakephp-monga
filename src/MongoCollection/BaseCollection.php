@@ -15,6 +15,8 @@ use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\ORM\BehaviorRegistry;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
+use Cake\Validation\ValidatorAwareTrait;
 use CakeMonga\Database\MongoConnection;
 use Closure;
 
@@ -26,6 +28,21 @@ use Closure;
 class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 {
     use EventDispatcherTrait;
+    use ValidatorAwareTrait;
+
+    /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    const DEFAULT_VALIDATOR = 'default';
+
+    /**
+     * The alias this object is assigned to validators as.
+     *
+     * @var string
+     */
+    const VALIDATOR_PROVIDER_NAME = 'table';
 
     protected $_behaviors;
 
@@ -75,6 +92,7 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         $this->setMongaCollection($collection_name);
         $this->initialize($config);
+        $this->_validatorClass = 'CakeMonga\Validation\MongoValidator';
         return $this;
     }
 
@@ -386,6 +404,10 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
             return false;
         }
 
+        if ($errors = $this->validate($document, $options, true)) {
+            return ['__errors' => $errors];
+        }
+
         $results = $this->collection->save($document, $options);
 
         $after_save_event = $this->dispatchEvent('Model.afterSave', compact('results', 'document', 'options'));
@@ -420,6 +442,10 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
 
         if ($before_update_event->isStopped()) {
             return false;
+        }
+
+        if ($errors = $this->validate($values, $options, false)) {
+            return ['__errors' => $errors];
         }
 
         $results = $this->collection->update($values, $query, $options);
@@ -559,5 +585,33 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
         throw new \BadMethodCallException(
             sprintf('Unknown method "%s"', $method)
         );
+    }
+
+    public function validate($document, $options, $isNew)
+    {
+        if (!isset($options['validate'])) {
+            $options['validate'] = true;
+        }
+        if (!$options['validate']) {
+            return [];
+        }
+        if ($options['validate'] === true) {
+            $options['validate'] = $this->validator('default');
+        }
+        if (is_string($options['validate'])) {
+            $options['validate'] = $this->validator($options['validate']);
+        }
+        if (!is_object($options['validate'])) {
+            throw new \RuntimeException(
+                sprintf('validate must be a boolean, a string or an object. Got %s.', gettype($options['validate']))
+            );
+        }
+
+        return $options['validate']->errors($document, $isNew);
+    }
+
+    public function validationDefault(Validator $validator)
+    {
+        return $validator;
     }
 }
