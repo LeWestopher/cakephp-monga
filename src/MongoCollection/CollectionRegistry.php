@@ -8,7 +8,6 @@
 
 namespace CakeMonga\MongoCollection;
 
-
 use Cake\Core\Exception\Exception;
 use Cake\Datasource\ConnectionManager;
 

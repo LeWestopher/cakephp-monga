@@ -88,6 +88,7 @@ class BaseCollection implements EventListenerInterface, EventDispatcherInterface
     {
 
     }
+    
     /**
      * Returns the behavior registry for this table.
      *
